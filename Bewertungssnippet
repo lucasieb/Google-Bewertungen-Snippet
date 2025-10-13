@@ -442,6 +442,215 @@
       return info;
     }
 
+    function cleanText(value){
+      return typeof value==='string' ? value.replace(/\s+/g,' ').trim() : '';
+    }
+
+    function normalizeNumber(value){
+      if(value===undefined || value===null || value==='') return null;
+      if(typeof value==='number' && Number.isFinite(value)) return value;
+      if(typeof value==='string'){
+        const normalized=value.replace(/[^0-9,\.]/g,'').replace(',','.');
+        if(!normalized) return null;
+        const num=Number(normalized);
+        return Number.isFinite(num) ? num : null;
+      }
+      return null;
+    }
+
+    function normalizeCount(value){
+      const num=normalizeNumber(value);
+      if(num===null) return null;
+      return Math.round(num);
+    }
+
+    function pickImageUrl(candidate){
+      if(!candidate) return '';
+      if(typeof candidate==='string'){
+        const trimmed=candidate.trim();
+        if(!trimmed) return '';
+        if(/^data:/i.test(trimmed)) return '';
+        if(/maps\.gstatic\.com/i.test(trimmed)) return '';
+        if(trimmed.startsWith('//')) return trimmed;
+        if(/^https?:\/\//i.test(trimmed)) return trimmed;
+        return '';
+      }
+      if(Array.isArray(candidate)){
+        for(const item of candidate){
+          const url=pickImageUrl(item);
+          if(url) return url;
+        }
+      }else if(typeof candidate==='object'){
+        const keys=['url','image','src','href','photoUri','thumbnailUrl','coverPhoto','icon','value'];
+        for(const key of keys){
+          if(key in candidate){
+            const url=pickImageUrl(candidate[key]);
+            if(url) return url;
+          }
+        }
+      }
+      return '';
+    }
+
+    function extractAddress(value){
+      if(!value) return '';
+      if(typeof value==='string'){ return cleanText(value); }
+      const parts=[];
+      const pushPart=part=>{
+        const text=extractAddress(part);
+        if(text){ parts.push(text); }
+      };
+      if(Array.isArray(value)){
+        value.forEach(pushPart);
+      }else if(typeof value==='object'){
+        const keys=['addressLines','addressLine','line','streetAddress','postalCode','addressLocality','locality','city','administrativeArea','region','state','province','country','countryCode','subLocality','area','county'];
+        for(const key of keys){
+          if(value[key]) pushPart(value[key]);
+        }
+      }
+      return parts.map(cleanText).filter(Boolean).filter((v,i,arr)=>arr.indexOf(v)===i).join(', ');
+    }
+
+    function applyInfo(target, source){
+      if(!source) return target;
+      const out={...target};
+      ['name','subtitle','locality','image','rating','reviewCount'].forEach(key=>{
+        if(out[key]===undefined || out[key]===null || out[key]===''){
+          const value=source[key];
+          if(value!==undefined && value!==null && value!==''){
+            out[key]=value;
+          }
+        }
+      });
+      return out;
+    }
+
+    function scanGoogleData(value, info){
+      if(value===undefined || value===null) return;
+      if(Array.isArray(value)){
+        if(value.length>=2){
+          const first=value[0];
+          const second=value[1];
+          if(typeof first==='string'){ const text=cleanText(first); if(text && text.length<=140 && !info.name) info.name=text; }
+          if(typeof second==='string'){ const text=cleanText(second); if(text && text.length<=200 && !info.subtitle) info.subtitle=text; }
+        }
+        value.forEach(item=>scanGoogleData(item, info));
+        return;
+      }
+      if(typeof value==='object'){
+        if(typeof value.name==='string' && value.name.trim() && !info.name){ info.name=value.name.trim(); }
+        if(typeof value.title==='string' && value.title.trim() && !info.name){ info.name=value.title.trim(); }
+        const subtitleCandidate=value.description || value.subtitle || value.tagline || value.category || value.primaryText || value.primaryCategory || value.headline;
+        if(typeof subtitleCandidate==='string' && subtitleCandidate.trim() && !info.subtitle){ info.subtitle=subtitleCandidate.trim(); }
+        if(value.displayName && typeof value.displayName.text==='string' && value.displayName.text.trim() && !info.name){ info.name=value.displayName.text.trim(); }
+        if(value.businessInfo && typeof value.businessInfo==='object'){
+          scanGoogleData(value.businessInfo, info);
+        }
+        if(value.profileInfo && typeof value.profileInfo==='object'){
+          scanGoogleData(value.profileInfo, info);
+        }
+        if(value.locationInfo && typeof value.locationInfo==='object'){
+          scanGoogleData(value.locationInfo, info);
+        }
+        const addressCandidate=value.address || value.addressInfo || value.location || value.businessAddress;
+        if(!info.locality){
+          const extracted=extractAddress(addressCandidate);
+          if(extracted) info.locality=extracted;
+        }
+        const imageCandidate=value.image || value.logo || value.photo || value.coverPhoto || value.icon || value.heroImage || value.photos || value.profileImage || value.photoUri || value.thumbnailUrl;
+        if(!info.image){
+          const url=pickImageUrl(imageCandidate);
+          if(url) info.image=url;
+        }
+        const ratingKeys=['rating','overallRating','averageRating','starRating','aggregateRating','ratingValue'];
+        for(const key of ratingKeys){
+          if(info.rating) break;
+          if(!(key in value)) continue;
+          const val=value[key];
+          if(typeof val==='object'){ scanGoogleData(val, info); }
+          const num=normalizeNumber(val);
+          if(num!==null && num>0 && num<=5){ info.rating=num; break; }
+        }
+        const countKeys=['userRatingCount','reviewCount','reviewsCount','ratingCount','reviewNumber'];
+        for(const key of countKeys){
+          if(info.reviewCount) break;
+          if(!(key in value)) continue;
+          const num=normalizeCount(value[key]);
+          if(num){ info.reviewCount=num; break; }
+        }
+        Object.values(value).forEach(v=>scanGoogleData(v, info));
+        return;
+      }
+      if(typeof value==='string'){
+        const text=value.trim();
+        if(!text) return;
+        if(!info.image && /https?:\/\/.+googleusercontent\.com\//i.test(text)){ info.image=text; }
+        if(!info.subtitle && text.length>20 && text.length<240 && /[·•,]/.test(text)){ info.subtitle=cleanText(text); }
+        return;
+      }
+      if(typeof value==='number'){
+        if(!info.rating && value>0 && value<=5){ info.rating=value; return; }
+        if(!info.reviewCount && value>0 && Number.isInteger(value) && value<200000){ info.reviewCount=value; }
+      }
+    }
+
+    function extractGoogleProfileFromHtml(html){
+      if(!html) return {};
+      const info={};
+      const appMatch=html.match(/APP_INITIALIZATION_STATE=(\[[\s\S]*?\]);/);
+      if(appMatch){
+        try{
+          const parsed=JSON.parse(appMatch[1]);
+          scanGoogleData(parsed, info);
+        }catch(_){ /* ignore */ }
+      }
+      const callbackRegex=/AF_initDataCallback\(([^)]*)\);/g;
+      let cbMatch;
+      while((cbMatch=callbackRegex.exec(html))){
+        const chunk=cbMatch[1];
+        const dataIdx=chunk.indexOf('data:');
+        if(dataIdx===-1) continue;
+        const start=chunk.indexOf('[', dataIdx);
+        if(start===-1) continue;
+        let depth=0; let inString=false; let escape=false; let end=-1;
+        for(let i=start;i<chunk.length;i++){
+          const ch=chunk[i];
+          if(inString){
+            if(escape){ escape=false; continue; }
+            if(ch==='\\'){ escape=true; continue; }
+            if(ch==='"'){ inString=false; }
+            continue;
+          }
+          if(ch==='"'){ inString=true; continue; }
+          if(ch==='['){ depth++; }
+          if(ch===']'){
+            depth--;
+            if(depth===0){ end=i; break; }
+          }
+        }
+        if(end===-1) continue;
+        const jsonText=chunk.slice(start, end+1);
+        try{
+          const parsed=JSON.parse(jsonText);
+          scanGoogleData(parsed, info);
+        }catch(_){ /* ignore */ }
+      }
+      return info;
+    }
+
+    function enrichProfileInfo(base, html){
+      const googleInfo=extractGoogleProfileFromHtml(html);
+      const merged=applyInfo(base||{}, googleInfo);
+      if(merged.name && merged.subtitle){
+        const nameClean=cleanText(merged.name).toLowerCase();
+        const subClean=cleanText(merged.subtitle).toLowerCase();
+        if(nameClean && subClean && nameClean===subClean){
+          merged.subtitle='';
+        }
+      }
+      return merged;
+    }
+
     async function resolveProfile(url){
       if(!url) return {};
       const attempts=[];
@@ -460,7 +669,7 @@
           if(!res.ok) throw new Error(`Request failed (${res.status})`);
           const text=await res.text();
           const doc=new DOMParser().parseFromString(text,'text/html');
-          const info=extractProfileFromDocument(doc) || {};
+          const info=enrichProfileInfo(extractProfileFromDocument(doc) || {}, text);
           const resolvedUrl=(res.url && res.url.startsWith('https://r.jina.ai/')) ? cleaned : (res.url||cleaned);
           const hasData=Object.keys(info).length>0;
           info._baseUrl=resolvedUrl;
