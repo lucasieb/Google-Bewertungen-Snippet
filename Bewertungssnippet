@@ -177,7 +177,12 @@
         rating: "4,9",
         reviewCount: 27,
         image: ""
-      }
+      },
+      proxies: [
+        /* Optional zusätzliche Proxys, {url} wird durch den Profil-Link ersetzt */
+        /* Beispiel für proxy.cors.sh (eigener temp_* Schlüssel eintragen, sonst auslassen): */
+        // { url: "https://proxy.cors.sh/{url}", headers: { "x-cors-api-key": "temp_xxxxx" } }
+      ]
     };
 
     const reviews = [
@@ -373,6 +378,23 @@
       });
     }
 
+    function decodeEntities(value){
+      if(value===undefined||value===null||value==='') return value;
+      const textarea=document.createElement('textarea');
+      textarea.innerHTML=value;
+      return textarea.value;
+    }
+
+    function mergeInfo(base={}, extra={}){
+      const out={...base};
+      Object.entries(extra).forEach(([key,val])=>{
+        if(val!==undefined && val!==null && val!==''){
+          out[key]=val;
+        }
+      });
+      return out;
+    }
+
     function parseJsonLd(doc){
       const info={};
       const scripts=Array.from(doc.querySelectorAll('script[type="application/ld+json"]'));
@@ -442,34 +464,144 @@
       return info;
     }
 
-    async function resolveProfile(url){
-      if(!url) return {};
-      const attempts=[];
-      const cleaned=url.trim();
-      if(cleaned) attempts.push(cleaned);
-      if(/^https?:\/\//i.test(cleaned) && !/^https?:\/\/r\.jina\.ai\//i.test(cleaned)){
-        const proxied=`https://r.jina.ai/${cleaned}`;
-        if(!attempts.includes(proxied)) attempts.push(proxied);
+    function extractProfileFromText(html){
+      if(!html) return {};
+      const info={};
+      const search=(patterns)=>{
+        for(const pattern of patterns){
+          const re=new RegExp(`<meta[^>]+${pattern}[^>]*content=["']([^"']+)["'][^>]*>`, 'i');
+          const match=re.exec(html);
+          if(match){ return decodeEntities(match[1].trim()); }
+        }
+        return '';
+      };
+      if(!info.name){
+        const val=search(['property=["\']og:title["\']','name=["\']og:title["\']','itemprop=["\']name["\']']);
+        if(val) info.name=val;
       }
+      if(!info.subtitle){
+        const val=search(['property=["\']og:description["\']','name=["\']description["\']','itemprop=["\']description["\']']);
+        if(val) info.subtitle=val;
+      }
+      if(!info.image){
+        const val=search(['property=["\']og:image["\']','name=["\']og:image["\']','itemprop=["\']image["\']']);
+        if(val) info.image=val;
+      }
+      if(!info.locality){
+        let val=search(['itemprop=["\']addressLocality["\']','property=["\']business:contact_data:locality["\']']);
+        if(!val){
+          const localityMatch=html.match(/"addressLocality"\s*:\s*"([^"\\]+)"/i) || html.match(/"addressRegion"\s*:\s*"([^"\\]+)"/i);
+          if(localityMatch) val=decodeEntities(localityMatch[1]);
+        }
+        if(val) info.locality=val;
+      }
+      if(!info.rating){
+        const ratingMatch=html.match(/"ratingValue"\s*:\s*"?(\d+(?:[\.,]\d+)?)/i);
+        if(ratingMatch){
+          const num=Number(ratingMatch[1].replace(',','.'));
+          info.rating=!Number.isNaN(num)?num:ratingMatch[1];
+        }
+      }
+      if(!info.reviewCount){
+        const reviewMatch=html.match(/"reviewCount"\s*:\s*"?(\d+)/i);
+        if(reviewMatch){
+          const num=Number(reviewMatch[1]);
+          info.reviewCount=!Number.isNaN(num)?num:reviewMatch[1];
+        }
+      }
+      if(!info.subtitle){
+        const altMatch=html.match(/"description"\s*:\s*"([^"\\]+)"/i);
+        if(altMatch){ info.subtitle=decodeEntities(altMatch[1]); }
+      }
+      if(!info.image){
+        const imgMatch=html.match(/"image"\s*:\s*"(https?:[^"\\]+)"/i);
+        if(imgMatch){ info.image=decodeEntities(imgMatch[1]); }
+      }
+      if(!info.name){
+        const nameMatch=html.match(/"name"\s*:\s*"([^"\\]+)"/i);
+        if(nameMatch){ info.name=decodeEntities(nameMatch[1]); }
+      }
+      return info;
+    }
+
+    function buildProfileAttempts(rawUrl){
+      const cleaned=(rawUrl||'').trim();
+      if(!cleaned) return [];
+      const stripped=cleaned.replace(/^https?:\/\//i,'');
+      const encoded=encodeURIComponent(cleaned);
+      const attempts=[];
+      const push=attempt=>{
+        if(!attempt || !attempt.url) return;
+        if(attempts.some(item=>item.url===attempt.url)) return;
+        attempts.push({
+          url:attempt.url,
+          headers:attempt.headers||null,
+          baseUrl:attempt.baseUrl||cleaned
+        });
+      };
+      push({url:cleaned});
+      push({url:`https://r.jina.ai/https://${stripped}`});
+      push({url:`https://r.jina.ai/http://${stripped}`});
+      push({url:`https://cors.isomorphic-git.org/${cleaned}`});
+      push({url:`https://thingproxy.freeboard.io/fetch/${cleaned}`});
+      push({url:`https://api.allorigins.win/raw?url=${encoded}`});
+      const custom=GOOGLE_PROFILE.proxies;
+      if(Array.isArray(custom)){
+        custom.forEach(entry=>{
+          if(!entry) return;
+          if(typeof entry==='string'){
+            const repl=entry.replace(/\{url\}/g, cleaned).replace(/\{encoded\}/g, encoded).replace(/\{stripped\}/g, stripped);
+            push({url:repl});
+            return;
+          }
+          if(entry && entry.url){
+            const repl=entry.url.replace(/\{url\}/g, cleaned).replace(/\{encoded\}/g, encoded).replace(/\{stripped\}/g, stripped);
+            push({url:repl, headers:entry.headers||null, baseUrl:entry.baseUrl||cleaned});
+          }
+        });
+      }else if(custom && typeof custom==='object' && custom.corsShKey){
+        push({
+          url:`https://proxy.cors.sh/${cleaned}`,
+          headers:{'x-cors-api-key':custom.corsShKey}
+        });
+      }
+      return attempts;
+    }
+
+    async function resolveProfile(url){
+      const attempts=buildProfileAttempts(url);
+      if(!attempts.length) return {};
       let bestInfo=null;
       let bestScore=-1;
       let lastError=null;
-      for(const target of attempts){
+      for(const attempt of attempts){
         try{
-          const res=await fetch(target,{mode:'cors'});
+          const res=await fetch(attempt.url,{
+            mode:'cors',
+            credentials:'omit',
+            headers:attempt.headers||undefined,
+            referrerPolicy:'no-referrer'
+          });
           if(!res.ok) throw new Error(`Request failed (${res.status})`);
           const text=await res.text();
           const doc=new DOMParser().parseFromString(text,'text/html');
-          const info=extractProfileFromDocument(doc) || {};
-          const resolvedUrl=(res.url && res.url.startsWith('https://r.jina.ai/')) ? cleaned : (res.url||cleaned);
-          const hasData=Object.keys(info).length>0;
-          info._baseUrl=resolvedUrl;
+          const docInfo=extractProfileFromDocument(doc) || {};
+          const textInfo=extractProfileFromText(text);
+          const info=mergeInfo(textInfo, docInfo);
+          if(!info._baseUrl){
+            const resolved=res.url || attempt.baseUrl || url;
+            const isProxy=resolved.startsWith('https://r.jina.ai/') || resolved.startsWith('https://cors.isomorphic-git.org/') || resolved.includes('thingproxy.freeboard.io') || resolved.includes('api.allorigins.win') || resolved.includes('proxy.cors.sh/');
+            info._baseUrl=isProxy ? (attempt.baseUrl||url) : resolved;
+          }
           const coreKeys=['name','subtitle','locality','image'];
           const score=coreKeys.reduce((acc,key)=> acc + (info[key]?1:0), 0);
-          if(hasData && (score>=3 || target.startsWith('https://r.jina.ai/'))){
+          if(score>bestScore){
+            bestInfo=info;
+            bestScore=score;
+          }
+          if(score>=3){
             return info;
           }
-          if(score>bestScore){ bestInfo=info; bestScore=score; }
         }catch(err){
           lastError=err;
         }
