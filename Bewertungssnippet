@@ -3,7 +3,7 @@
     :root{
       --ink:#202124; --muted:#5f6368; --card:#ffffff; --ghost:#f1f3f4;
       --accent:#1a73e8; --shadow:0 8px 24px rgba(60,64,67,.12);
-      --radius:14px; --maxw:1100px;
+      --radius:14px; --maxw:1100px; --arrow-offset:clamp(40px,6.6vw,64px);
     }
 
     /* wirklich transparent */
@@ -22,7 +22,7 @@
     .mm-carousel{
       position:relative; width:100%;
       height:340px; /* wird per JS auf max Kartenhöhe gesetzt */
-      margin:6px 0 8px 0; padding:0; background:transparent;
+      margin:6px 0 8px 0; padding:0 var(--arrow-offset); background:transparent;
       display:flex; align-items:center; justify-content:center;
       overflow:visible;
     }
@@ -30,7 +30,7 @@
 
     .mm-card{
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      width:min(520px,92%);
+      width:min(500px,88%);
       background:var(--card);
       border-radius:var(--radius);
       padding:18px;
@@ -39,7 +39,7 @@
       backface-visibility:hidden; overflow:hidden;
     }
     .mm-card .stars{ font-size:17px; color:#f6b042; letter-spacing:.4px; margin-bottom:6px; }
-    .mm-card .quote{ font-size:15.5px; line-height:1.55; margin-bottom:10px; }
+    .mm-card .quote{ font-size:15.5px; line-height:1.55; margin-bottom:10px; position:relative; }
     .mm-card .meta{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       color:var(--muted); font-size:13.5px;
@@ -48,10 +48,19 @@
     .mm-card .meta .who{ font-weight:600; color:var(--ink); }
     .mm-card .meta .type{ color:var(--muted); text-align:right; }
 
+    .mm-card .more-toggle{
+      display:none; margin:0 0 10px; padding:0; border:none; background:none;
+      color:var(--accent); font-weight:600; font-size:14px; cursor:pointer;
+      align-items:center; gap:6px;
+    }
+    .mm-card .more-toggle:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:6px; }
+    .mm-card .more-toggle svg{ width:16px; height:16px; transition:transform .2s ease; }
+    .mm-card.is-expanded .more-toggle svg{ transform:rotate(180deg); }
+
     /* Zustände (Desktop) */
-    .is-active{ transform:translate(-50%,-50%) translateZ(110px) scale(1.015); opacity:1; z-index:40; filter:none; background:#fff; }
-    .is-prev  { transform:translate(-50%,-50%) translateX(-32%) rotateY(11deg) translateZ(-40px) scale(.92);  opacity:.62; z-index:30; filter:grayscale(.08) brightness(.98); background:var(--ghost); }
-    .is-next  { transform:translate(-50%,-50%) translateX(32%)  rotateY(-11deg) translateZ(-40px) scale(.92);  opacity:.62; z-index:30; filter:grayscale(.08) brightness(.98); background:var(--ghost); }
+    .is-active{ transform:translate(-50%,-50%) translateZ(70px) scale(1); opacity:1; z-index:40; filter:none; background:#fff; }
+    .is-prev  { transform:translate(-50%,-50%) translateX(-68%) translateZ(-120px) scale(.68); opacity:.36; z-index:20; filter:grayscale(.2) brightness(.92); background:var(--ghost); }
+    .is-next  { transform:translate(-50%,-50%) translateX(68%)  translateZ(-120px) scale(.68); opacity:.36; z-index:20; filter:grayscale(.2) brightness(.92); background:var(--ghost); }
     .is-hide  { opacity:0; pointer-events:none; z-index:10; }
 
     /* Pfeile */
@@ -66,46 +75,60 @@
     }
     .mm-arrow:hover{ transform:translateY(-50%) scale(1.04); background:#fafafa; }
     .mm-arrow:active{ transform:translateY(-50%) scale(.98); }
-    .mm-arrow.left{ left:0; } .mm-arrow.right{ right:0; }
+    .mm-arrow.left{ left:calc(var(--arrow-offset) * -0.42); }
+    .mm-arrow.right{ right:calc(var(--arrow-offset) * -0.42); }
     .mm-arrow svg{ width:22px; height:22px; display:block; }
 
     /* ===== Google-Profil fix ===== */
     .mm-gprof{
       margin:10px auto 0; width:100%; max-width:var(--maxw);
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding:12px 14px; border:1px solid rgba(60,64,67,.08); border-radius:12px;
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      padding:14px 18px; border:1px solid rgba(60,64,67,.08); border-radius:999px;
       background:#fff; box-shadow:0 6px 18px rgba(60,64,67,.06);
-      cursor:pointer; opacity:.6; transition:opacity .2s ease, box-shadow .2s ease;
+      cursor:default; opacity:.6; transition:opacity .2s ease, box-shadow .2s ease, transform .2s ease;
     }
-    .mm-gprof.enabled{ opacity:1; }
-    .mm-gleft{ display:flex; align-items:center; gap:10px; min-width:0; }
-    .mm-avatar{ width:40px; height:40px; aspect-ratio:1/1; border-radius:50%; overflow:hidden; background:linear-gradient(#efefef,#dcdcdc); border:1px solid rgba(0,0,0,.06); flex:0 0 40px; }
+    .mm-gprof.enabled{ opacity:1; box-shadow:0 10px 28px rgba(60,64,67,.12); cursor:pointer; }
+    .mm-gprof.enabled:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; }
+    .mm-gprof.enabled:hover{ transform:translateY(-1px); }
+    .mm-gleft{ display:flex; align-items:center; gap:12px; min-width:0; }
+    .mm-avatar{ width:48px; height:48px; aspect-ratio:1/1; border-radius:50%; overflow:hidden; background:linear-gradient(#efefef,#dcdcdc); border:1px solid rgba(0,0,0,.06); flex:0 0 48px; }
     .mm-avatar img{ width:100%; height:100%; object-fit:cover; border-radius:50%; display:block; }
-    .mm-gtitles{ display:flex; flex-direction:column; min-width:0; }
-    .mm-gtitles .gtitle{ font-weight:600; color:var(--ink); font-size:14.5px; line-height:1.15; }
-    .mm-gtitles .gsub{ font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:420px; }
-    .mm-gmid{ display:flex; align-items:center; gap:8px; color:var(--ink); font-size:14px; white-space:nowrap; }
-    .mm-gscore{ font-weight:700; }
-    .mm-stars{ color:#f6b042; letter-spacing:.4px; }
-    .mm-count{ color:var(--muted); font-size:13px; }
+    .mm-gtitles{ display:flex; flex-direction:column; min-width:0; gap:3px; }
+    .mm-gtitles .gtitle{ font-weight:600; color:var(--ink); font-size:15px; line-height:1.2; }
+    .mm-gtitles .gsub{ font-size:13.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:420px; }
+    .mm-gtitles .gmeta{ font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:420px; }
     .mm-gactions{ display:flex; align-items:center; }
-    .mm-btn{ appearance:none !important; border:none !important; border-radius:12px !important; padding:8px 12px !important; font-weight:700 !important; line-height:1 !important; background:var(--accent); color:#fff; opacity:.6; pointer-events:none; }
+    .mm-btn{ appearance:none !important; border:none !important; border-radius:999px !important; padding:11px 20px !important; font-weight:700 !important; line-height:1 !important; background:var(--accent); color:#fff; opacity:.6; pointer-events:none; cursor:not-allowed; font-size:14px; transition:background .2s ease, transform .2s ease; }
+    .mm-gprof.enabled .mm-btn{ cursor:pointer; opacity:1; }
+    .mm-btn:hover{ background:#1667cf; }
+    .mm-btn:active{ transform:scale(.97); }
 
     /* Tablet */
-    @media (max-width:900px){ .mm-card{ width:min(520px,94%); } }
+    @media (max-width:900px){ .mm-card{ width:min(500px,94%); } }
 
     /* ===== Mobile-Feinschliff ===== */
     @media (max-width:640px){
-      .mm-card{ width:94% !important; box-shadow:none !important; border:1px solid rgba(60,64,67,.06); }
+      .mm-carousel{ padding:0 34px; }
+      .mm-card{ width:96% !important; box-shadow:none !important; border:1px solid rgba(60,64,67,.06); }
       .is-active{ transform:translate(-50%,-50%) scale(1) !important; } /* kein 3D */
       .is-prev,.is-next{ display:none !important; }                      /* keine Nachbarn */
-      .mm-arrow.left{ left:0 !important; } .mm-arrow.right{ right:0 !important; }  /* nicht abgeschnitten */
+      .mm-arrow.left{ left:12px !important; } .mm-arrow.right{ right:12px !important; }  /* nicht abgeschnitten */
 
-      .mm-gprof{ flex-wrap:wrap; align-items:flex-start; row-gap:10px; }
-      .mm-gleft{ width:100%; }
-      .mm-gmid{ width:calc(100% - 110px); }         /* Platz für Button rechts */
-      .mm-gactions{ width:110px; justify-content:flex-end; }
-      .mm-btn{ opacity:1; }                         /* auf Mobile gut lesbar */
+      .mm-gprof{ flex-direction:column; align-items:center; text-align:center; gap:14px; border-radius:24px; padding:18px; }
+      .mm-gleft{ width:100%; justify-content:center; }
+      .mm-gtitles .gsub,.mm-gtitles .gmeta{ max-width:100%; }
+      .mm-gactions{ width:100%; justify-content:center; }
+      .mm-btn{ width:100%; max-width:220px; }
+
+      .mm-card.has-more .more-toggle{ display:inline-flex; }
+      .mm-card.is-collapsed .quote{
+        display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:7;
+        overflow:hidden; padding-bottom:4px;
+      }
+      .mm-card.is-collapsed .quote::after{
+        content:""; position:absolute; inset:auto 0 0 0; height:44px;
+        background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.92) 55%, rgba(255,255,255,1) 100%);
+      }
     }
 
     /* Fallback NUR solange JS noch nicht ready ist */
@@ -133,15 +156,11 @@
         <div class="mm-gtitles">
           <div id="mmGName" class="gtitle">MietMichBox – Musikbox Vermietung</div>
           <div id="mmGSub"  class="gsub">Event- &amp; Party-Sound · NRW</div>
+          <div id="mmGMeta" class="gmeta">NRW</div>
         </div>
       </div>
-      <div class="mm-gmid">
-        <span id="mmGScore" class="mm-gscore">4,9</span>
-        <span class="mm-stars" aria-hidden="true">★★★★★</span>
-        <span id="mmGCount" class="mm-count">(27&nbsp;Bewertungen)</span>
-      </div>
       <div class="mm-gactions">
-        <button id="mmGBtn" class="mm-btn" aria-disabled="true">Zum Profil</button>
+        <button id="mmGBtn" class="mm-btn" type="button" aria-disabled="true">Zum Profil</button>
       </div>
     </div>
   </div>
@@ -151,9 +170,19 @@
     /* Daten */
     const GOOGLE_PROFILE = {
       url: "https://share.google/gH52JHvV3vwQ5Fxgp",  /* <-- Link einsetzen */
-      name: "MietMichBox – Musikbox Vermietung",
-      subtitle: "Event- & Party-Sound · NRW",
-      score: "4,9", reviews: 27, image: ""
+      fallback: {
+        name: "MietMichBox – Musikbox Vermietung",
+        subtitle: "Event- & Party-Sound · NRW",
+        locality: "NRW",
+        rating: "4,9",
+        reviewCount: 27,
+        image: ""
+      },
+      proxies: [
+        /* Optional zusätzliche Proxys, {url} wird durch den Profil-Link ersetzt */
+        /* Beispiel für proxy.cors.sh (eigener temp_* Schlüssel eintragen, sonst auslassen): */
+        // { url: "https://proxy.cors.sh/{url}", headers: { "x-cors-api-key": "temp_xxxxx" } }
+      ]
     };
 
     const reviews = [
@@ -170,6 +199,8 @@
       { stars:5, quote:"Team-Event in der Halle: Wir brauchten kompakten, zuverlässigen Sound. Die Box füllte den Raum problemlos, ohne zu dröhnen. Schnelle Abstimmung im Vorfeld, pünktliche Lieferung, top Gesamtpaket.", name:"Schneider IT-Services", tag:"Unternehmen · Köln" },
       { stars:5, quote:"Für Afterwork-Sets und kleinere Bookings super – stabil, laut genug und ohne Schnickschnack einsatzbereit.", name:"DJ Mia Schneider", tag:"DJ · Duisburg" }
     ];
+
+    const LONG_QUOTE_THRESHOLD = 260;
 
     /* Elemente */
     const root = document.getElementById('mm-reviews');
@@ -189,10 +220,64 @@
       el.setAttribute('role','group');
       el.setAttribute('aria-roledescription','slide');
       el.setAttribute('aria-label', `Bewertung ${i+1} von ${reviews.length}`);
-      el.innerHTML = `
-        <div class="stars" aria-label="${r.stars} von 5 Sternen">${starRow(r.stars)}</div>
-        <div class="quote">„${r.quote}“</div>
-        <div class="meta"><div class="who">${r.name}</div><div class="type">${r.tag}</div></div>`;
+
+      const stars = document.createElement('div');
+      stars.className='stars';
+      stars.setAttribute('aria-label', `${r.stars} von 5 Sternen`);
+      stars.textContent = starRow(r.stars);
+
+      const quote = document.createElement('div');
+      quote.className='quote';
+      quote.textContent = `„${r.quote}“`;
+
+      const meta = document.createElement('div');
+      meta.className='meta';
+      const who = document.createElement('div');
+      who.className='who';
+      who.textContent = r.name;
+      const type = document.createElement('div');
+      type.className='type';
+      type.textContent = r.tag;
+      meta.append(who,type);
+
+      const isLong = (r.quote||'').length > LONG_QUOTE_THRESHOLD;
+      if(isLong){
+        el.dataset.long='1';
+      }
+
+      el.append(stars, quote);
+
+      if(isLong){
+        const moreBtn=document.createElement('button');
+        moreBtn.type='button';
+        moreBtn.className='more-toggle';
+        const label=document.createElement('span');
+        label.textContent='Mehr anzeigen';
+        const icon=document.createElementNS('http://www.w3.org/2000/svg','svg');
+        icon.setAttribute('viewBox','0 0 24 24');
+        icon.setAttribute('aria-hidden','true');
+        const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d','M7 10l5 5 5-5z');
+        path.setAttribute('fill','currentColor');
+        icon.appendChild(path);
+        moreBtn.append(label, icon);
+        moreBtn.setAttribute('aria-expanded','false');
+        moreBtn.addEventListener('click',()=>{
+          const expanded = el.classList.toggle('is-expanded');
+          if(expanded){
+            el.classList.remove('is-collapsed');
+            label.textContent='Weniger anzeigen';
+          }else{
+            el.classList.add('is-collapsed');
+            label.textContent='Mehr anzeigen';
+          }
+          moreBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+          measureMax();
+        });
+        el.appendChild(moreBtn);
+      }
+
+      el.appendChild(meta);
       return el;
     }
     function render(){
@@ -200,17 +285,56 @@
       reviews.forEach((r,i)=>{ const c=createCard(r,i); cards.push(c); track.appendChild(c); });
     }
 
+    function updateTruncationStates(){
+      const mobile=isMobile();
+      cards.forEach(card=>{
+        const isLong=card.dataset.long==='1';
+        const toggle=card.querySelector('.more-toggle');
+        const label=toggle ? toggle.querySelector('span') : null;
+        if(!isLong){
+          card.classList.remove('has-more','is-collapsed','is-expanded');
+          if(toggle){ toggle.hidden=true; toggle.setAttribute('aria-expanded','false'); if(label) label.textContent='Mehr anzeigen'; }
+          return;
+        }
+        card.classList.add('has-more');
+        if(!toggle) return;
+        if(mobile){
+          toggle.hidden=false;
+          if(!card.classList.contains('is-expanded')){
+            card.classList.add('is-collapsed');
+            if(label) label.textContent='Mehr anzeigen';
+            toggle.setAttribute('aria-expanded','false');
+          }else{
+            card.classList.remove('is-collapsed');
+            if(label) label.textContent='Weniger anzeigen';
+            toggle.setAttribute('aria-expanded','true');
+          }
+        }else{
+          toggle.hidden=true;
+          card.classList.remove('is-collapsed');
+          if(card.classList.contains('is-expanded')){
+            card.classList.remove('is-expanded');
+          }
+          if(label) label.textContent='Mehr anzeigen';
+          toggle.setAttribute('aria-expanded','false');
+        }
+      });
+    }
+
     /* Höhe der längsten Karte messen */
     let maxH = 340;
     function measureMax(){
       const meas = document.createElement('div');
-      const w = Math.min(carousel.clientWidth || 600, 520);
+      const w = Math.min(carousel.clientWidth || 600, 500);
       meas.style.cssText = `position:fixed;left:-9999px;top:-9999px;width:${w}px;padding:0;margin:0`;
       document.body.appendChild(meas);
       let h=0;
       cards.forEach(c=>{
         const x=c.cloneNode(true);
-        x.className='mm-card is-active'; x.style.position='static'; x.style.transform='none'; x.style.boxShadow='none';
+        x.className=c.className;
+        x.classList.remove('is-prev','is-next','is-hide');
+        x.classList.add('is-active');
+        x.style.position='static'; x.style.transform='none'; x.style.boxShadow='none';
         meas.appendChild(x); h=Math.max(h, x.offsetHeight); meas.removeChild(x);
       });
       document.body.removeChild(meas);
@@ -222,12 +346,21 @@
     let idx = 0;
     function apply(){
       const n=cards.length; if(!n) return;
-      cards.forEach(c=> c.className='mm-card is-hide');
+      cards.forEach(c=>{
+        c.classList.remove('is-active','is-prev','is-next');
+        c.classList.add('is-hide');
+      });
       const a = cards[(idx%n+n)%n];
       const p = cards[((idx-1)%n+n)%n];
       const nx= cards[((idx+1)%n+n)%n];
-      a.classList.remove('is-hide'); a.classList.add('is-active');
-      if(!isMobile()){ p.classList.remove('is-hide'); p.classList.add('is-prev'); nx.classList.remove('is-hide'); nx.classList.add('is-next'); }
+      a.classList.remove('is-hide');
+      a.classList.add('is-active');
+      if(!isMobile()){
+        p.classList.remove('is-hide');
+        p.classList.add('is-prev');
+        nx.classList.remove('is-hide');
+        nx.classList.add('is-next');
+      }
       carousel.style.height = maxH+'px';
     }
     function next(){ idx=(idx+1)%cards.length; apply(); }
@@ -245,35 +378,329 @@
       });
     }
 
+    function decodeEntities(value){
+      if(value===undefined||value===null||value==='') return value;
+      const textarea=document.createElement('textarea');
+      textarea.innerHTML=value;
+      return textarea.value;
+    }
+
+    function mergeInfo(base={}, extra={}){
+      const out={...base};
+      Object.entries(extra).forEach(([key,val])=>{
+        if(val!==undefined && val!==null && val!==''){
+          out[key]=val;
+        }
+      });
+      return out;
+    }
+
+    function parseJsonLd(doc){
+      const info={};
+      const scripts=Array.from(doc.querySelectorAll('script[type="application/ld+json"]'));
+      const pushData=data=>{
+        if(!data || typeof data!=='object') return;
+        const types=[data['@type']].flat().filter(Boolean).map(t=>String(t).toLowerCase());
+        const isBusiness=types.some(t=>/business|organization|store|service/.test(t));
+        if(!isBusiness) return;
+        if(data.name && !info.name){ info.name=data.name; }
+        if(data.image && !info.image){ info.image=Array.isArray(data.image)?data.image[0]:data.image; }
+        if(data.description && !info.subtitle){ info.subtitle=data.description; }
+        const address=data.address;
+        if(address && !info.locality){
+          if(typeof address==='string'){ info.locality=address; }
+          else if(typeof address==='object'){
+            const {addressLocality,addressRegion,addressCountry}=address;
+            const parts=[addressLocality,addressRegion,addressCountry].filter(Boolean);
+            if(parts.length){ info.locality=parts.join(', '); }
+            else if(address.streetAddress){ info.locality=address.streetAddress; }
+          }
+        }
+        const rating=data.aggregateRating;
+        if(rating){
+          if(rating.ratingValue && !info.rating){
+            const num=Number(rating.ratingValue);
+            info.rating=!Number.isNaN(num)?num:rating.ratingValue;
+          }
+          if(rating.reviewCount && !info.reviewCount){
+            const num=Number(rating.reviewCount);
+            info.reviewCount=!Number.isNaN(num)?num:rating.reviewCount;
+          }
+        }
+        if(data.servesCuisine && !info.subtitle){ info.subtitle=data.servesCuisine; }
+        if(data.category && !info.subtitle){ info.subtitle=data.category; }
+      };
+      scripts.forEach(scr=>{
+        try{
+          const json=JSON.parse(scr.textContent.trim());
+          (Array.isArray(json)?json:[json]).forEach(item=>{
+            if(item['@graph']) item['@graph'].forEach(pushData);
+            pushData(item);
+          });
+        }catch(e){/* ignore */}
+      });
+      return info;
+    }
+
+    function absoluteUrl(value, base){
+      if(!value) return '';
+      try{ return new URL(value, base).href; }
+      catch(_){ return value; }
+    }
+
+    function extractProfileFromDocument(doc){
+      const info=parseJsonLd(doc);
+      const pick=(sel,attr='content')=>{
+        const el=doc.querySelector(sel);
+        if(!el) return '';
+        return attr==='text'? (el.textContent||'').trim(): (el.getAttribute(attr)||'').trim();
+      };
+      if(!info.name){ info.name=pick('meta[property="og:title"],meta[name="og:title"]') || pick('title','text'); }
+      if(!info.image){ info.image=pick('meta[property="og:image"],meta[name="og:image"]'); }
+      if(!info.subtitle){ info.subtitle=pick('meta[property="og:description"],meta[name="description"]'); }
+      if(!info.locality){
+        info.locality=pick('[itemprop="addressLocality"]','content') || pick('[itemprop="addressLocality"]','text');
+      }
+      return info;
+    }
+
+    function extractProfileFromText(html){
+      if(!html) return {};
+      const info={};
+      const search=(patterns)=>{
+        for(const pattern of patterns){
+          const re=new RegExp(`<meta[^>]+${pattern}[^>]*content=["']([^"']+)["'][^>]*>`, 'i');
+          const match=re.exec(html);
+          if(match){ return decodeEntities(match[1].trim()); }
+        }
+        return '';
+      };
+      if(!info.name){
+        const val=search(['property=["\']og:title["\']','name=["\']og:title["\']','itemprop=["\']name["\']']);
+        if(val) info.name=val;
+      }
+      if(!info.subtitle){
+        const val=search(['property=["\']og:description["\']','name=["\']description["\']','itemprop=["\']description["\']']);
+        if(val) info.subtitle=val;
+      }
+      if(!info.image){
+        const val=search(['property=["\']og:image["\']','name=["\']og:image["\']','itemprop=["\']image["\']']);
+        if(val) info.image=val;
+      }
+      if(!info.locality){
+        let val=search(['itemprop=["\']addressLocality["\']','property=["\']business:contact_data:locality["\']']);
+        if(!val){
+          const localityMatch=html.match(/"addressLocality"\s*:\s*"([^"\\]+)"/i) || html.match(/"addressRegion"\s*:\s*"([^"\\]+)"/i);
+          if(localityMatch) val=decodeEntities(localityMatch[1]);
+        }
+        if(val) info.locality=val;
+      }
+      if(!info.rating){
+        const ratingMatch=html.match(/"ratingValue"\s*:\s*"?(\d+(?:[\.,]\d+)?)/i);
+        if(ratingMatch){
+          const num=Number(ratingMatch[1].replace(',','.'));
+          info.rating=!Number.isNaN(num)?num:ratingMatch[1];
+        }
+      }
+      if(!info.reviewCount){
+        const reviewMatch=html.match(/"reviewCount"\s*:\s*"?(\d+)/i);
+        if(reviewMatch){
+          const num=Number(reviewMatch[1]);
+          info.reviewCount=!Number.isNaN(num)?num:reviewMatch[1];
+        }
+      }
+      if(!info.subtitle){
+        const altMatch=html.match(/"description"\s*:\s*"([^"\\]+)"/i);
+        if(altMatch){ info.subtitle=decodeEntities(altMatch[1]); }
+      }
+      if(!info.image){
+        const imgMatch=html.match(/"image"\s*:\s*"(https?:[^"\\]+)"/i);
+        if(imgMatch){ info.image=decodeEntities(imgMatch[1]); }
+      }
+      if(!info.name){
+        const nameMatch=html.match(/"name"\s*:\s*"([^"\\]+)"/i);
+        if(nameMatch){ info.name=decodeEntities(nameMatch[1]); }
+      }
+      return info;
+    }
+
+    function buildProfileAttempts(rawUrl){
+      const cleaned=(rawUrl||'').trim();
+      if(!cleaned) return [];
+      const stripped=cleaned.replace(/^https?:\/\//i,'');
+      const encoded=encodeURIComponent(cleaned);
+      const attempts=[];
+      const push=attempt=>{
+        if(!attempt || !attempt.url) return;
+        if(attempts.some(item=>item.url===attempt.url)) return;
+        attempts.push({
+          url:attempt.url,
+          headers:attempt.headers||null,
+          baseUrl:attempt.baseUrl||cleaned
+        });
+      };
+      push({url:cleaned});
+      push({url:`https://r.jina.ai/https://${stripped}`});
+      push({url:`https://r.jina.ai/http://${stripped}`});
+      push({url:`https://cors.isomorphic-git.org/${cleaned}`});
+      push({url:`https://thingproxy.freeboard.io/fetch/${cleaned}`});
+      push({url:`https://api.allorigins.win/raw?url=${encoded}`});
+      const custom=GOOGLE_PROFILE.proxies;
+      if(Array.isArray(custom)){
+        custom.forEach(entry=>{
+          if(!entry) return;
+          if(typeof entry==='string'){
+            const repl=entry.replace(/\{url\}/g, cleaned).replace(/\{encoded\}/g, encoded).replace(/\{stripped\}/g, stripped);
+            push({url:repl});
+            return;
+          }
+          if(entry && entry.url){
+            const repl=entry.url.replace(/\{url\}/g, cleaned).replace(/\{encoded\}/g, encoded).replace(/\{stripped\}/g, stripped);
+            push({url:repl, headers:entry.headers||null, baseUrl:entry.baseUrl||cleaned});
+          }
+        });
+      }else if(custom && typeof custom==='object' && custom.corsShKey){
+        push({
+          url:`https://proxy.cors.sh/${cleaned}`,
+          headers:{'x-cors-api-key':custom.corsShKey}
+        });
+      }
+      return attempts;
+    }
+
+    async function resolveProfile(url){
+      const attempts=buildProfileAttempts(url);
+      if(!attempts.length) return {};
+      let bestInfo=null;
+      let bestScore=-1;
+      let lastError=null;
+      for(const attempt of attempts){
+        try{
+          const res=await fetch(attempt.url,{
+            mode:'cors',
+            credentials:'omit',
+            headers:attempt.headers||undefined,
+            referrerPolicy:'no-referrer'
+          });
+          if(!res.ok) throw new Error(`Request failed (${res.status})`);
+          const text=await res.text();
+          const doc=new DOMParser().parseFromString(text,'text/html');
+          const docInfo=extractProfileFromDocument(doc) || {};
+          const textInfo=extractProfileFromText(text);
+          const info=mergeInfo(textInfo, docInfo);
+          if(!info._baseUrl){
+            const resolved=res.url || attempt.baseUrl || url;
+            const isProxy=resolved.startsWith('https://r.jina.ai/') || resolved.startsWith('https://cors.isomorphic-git.org/') || resolved.includes('thingproxy.freeboard.io') || resolved.includes('api.allorigins.win') || resolved.includes('proxy.cors.sh/');
+            info._baseUrl=isProxy ? (attempt.baseUrl||url) : resolved;
+          }
+          const coreKeys=['name','subtitle','locality','image'];
+          const score=coreKeys.reduce((acc,key)=> acc + (info[key]?1:0), 0);
+          if(score>bestScore){
+            bestInfo=info;
+            bestScore=score;
+          }
+          if(score>=3){
+            return info;
+          }
+        }catch(err){
+          lastError=err;
+        }
+      }
+      if(lastError){ console.warn('[mm-reviews] Profil konnte nicht vollständig geladen werden', lastError); }
+      return bestInfo || {};
+    }
+
+    function formatNumber(value){
+      if(value===undefined||value===null||value==='') return '';
+      if(typeof value==='number'){ return value.toLocaleString('de-DE'); }
+      return value;
+    }
+
     /* Google-Zeile */
     (function initG(){
-      const row=root.querySelector('#mmGProf'); const btn=root.querySelector('#mmGBtn');
-      root.querySelector('#mmGName').textContent=GOOGLE_PROFILE.name||"Unternehmensprofil";
-      root.querySelector('#mmGSub').textContent=GOOGLE_PROFILE.subtitle||"Kurzbeschreibung / Kategorie";
-      root.querySelector('#mmGScore').textContent=GOOGLE_PROFILE.score||"4,9";
-      root.querySelector('#mmGCount').textContent=`(${(GOOGLE_PROFILE.reviews??27)}\u00A0Bewertungen)`;
-      if(GOOGLE_PROFILE.image){
-        const img=root.querySelector('#mmGImg'); img.src=GOOGLE_PROFILE.image; img.style.display='block'; img.alt=GOOGLE_PROFILE.name||"Profilbild";
-      }
-      const url=GOOGLE_PROFILE.url;
-      if(url && /^https?:\/\//i.test(url)){
-        row.classList.add('enabled'); btn.style.opacity='1'; btn.style.pointerEvents='auto'; btn.setAttribute('aria-disabled','false');
-        const open=()=>window.open(url,'_blank','noopener');
+      const row=root.querySelector('#mmGProf');
+      const btn=root.querySelector('#mmGBtn');
+      const nameEl=root.querySelector('#mmGName');
+      const subEl=root.querySelector('#mmGSub');
+      const metaEl=root.querySelector('#mmGMeta');
+      const imgEl=root.querySelector('#mmGImg');
+      const fallback={...(GOOGLE_PROFILE.fallback||{})};
+      const profileUrl=GOOGLE_PROFILE.url;
+
+      const apply=data=>{
+        const merged={...fallback,...data};
+        const imageBase=(data && data._baseUrl) || profileUrl;
+        const canOpen=profileUrl && /^https?:\/\//i.test(profileUrl);
+        const ratingVal=merged.rating;
+        const reviewCount=merged.reviewCount;
+        nameEl.textContent=merged.name||'Unternehmensprofil';
+        subEl.textContent=(merged.subtitle||'Kurzbeschreibung / Kategorie').trim();
+        const metaBits=[];
+        if(merged.locality){ metaBits.push(merged.locality); }
+        if(metaBits.length){
+          metaEl.textContent=metaBits.join(' · ');
+          metaEl.hidden=false;
+        }else{
+          metaEl.textContent='';
+          metaEl.hidden=true;
+        }
+        if(merged.image){
+          imgEl.src=absoluteUrl(merged.image, imageBase);
+          imgEl.style.display='block';
+          imgEl.alt=merged.name||'Profilbild';
+        }else{
+          imgEl.removeAttribute('src');
+          imgEl.style.display='none';
+        }
+        const tooltipParts=[];
+        if(merged.name) tooltipParts.push(merged.name);
+        if(merged.locality) tooltipParts.push(merged.locality);
+        if(ratingVal && reviewCount){
+          tooltipParts.push(`Bewertung ${typeof ratingVal==='number'?ratingVal.toLocaleString('de-DE',{minimumFractionDigits:1, maximumFractionDigits:1}):ratingVal} aus ${formatNumber(reviewCount)} Bewertungen`);
+        }
+        row.setAttribute('title', tooltipParts.join(' · '));
+        const ariaLabel=[
+          merged.name||'Google Unternehmensprofil',
+          merged.locality || null,
+          ratingVal && reviewCount ? `Bewertung ${typeof ratingVal==='number'?ratingVal.toLocaleString('de-DE',{minimumFractionDigits:1, maximumFractionDigits:1}):ratingVal} aus ${formatNumber(reviewCount)} Bewertungen` : null,
+          canOpen ? 'öffnen' : 'Profilinformation'
+        ].filter(Boolean).join(', ');
+        row.setAttribute('aria-label', ariaLabel);
+        row.setAttribute('aria-disabled', canOpen ? 'false' : 'true');
+        row.setAttribute('tabindex', canOpen ? '0' : '-1');
+        btn.setAttribute('aria-disabled', canOpen ? 'false' : 'true');
+        btn.setAttribute('tabindex', canOpen ? '0' : '-1');
+      };
+
+      apply({});
+
+      if(profileUrl && /^https?:\/\//i.test(profileUrl)){
+        row.classList.add('enabled');
+        btn.style.opacity='1';
+        btn.style.pointerEvents='auto';
+        btn.setAttribute('aria-disabled','false');
+        const open=()=>window.open(profileUrl,'_blank','noopener');
         row.addEventListener('click',open);
         row.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); }});
         btn.addEventListener('click',e=>{ e.stopPropagation(); open(); });
+
+        if(window.fetch && window.DOMParser){
+          resolveProfile(profileUrl).then(data=>{ if(data && Object.keys(data).length){ apply(data); }});
+        }
       }
     })();
 
     /* Boot */
     function boot(){
-      render(); measureMax();
+      render();
+      updateTruncationStates();
+      measureMax();
       idx = Math.floor(Math.random()*cards.length);
       apply();
       prevBtn.addEventListener('click',prev);
       nextBtn.addEventListener('click',next);
       bindSwipe();
-      window.addEventListener('resize', ()=>{ measureMax(); apply(); });
+      window.addEventListener('resize', ()=>{ updateTruncationStates(); measureMax(); apply(); });
       // Fallback-Flag entfernen => verhindert die "oben links"-Fehlposition
       track.setAttribute('data-mm-ready','1');
     }
