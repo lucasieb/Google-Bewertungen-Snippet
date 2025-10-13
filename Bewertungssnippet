@@ -1,0 +1,284 @@
+<section id="mm-reviews" aria-label="Kundenbewertungen" style="box-sizing:border-box;">
+  <style>
+    :root{
+      --ink:#202124; --muted:#5f6368; --card:#ffffff; --ghost:#f1f3f4;
+      --accent:#1a73e8; --shadow:0 8px 24px rgba(60,64,67,.12);
+      --radius:14px; --maxw:1100px;
+    }
+
+    /* wirklich transparent */
+    #mm-reviews{
+      width:100%;
+      padding:clamp(16px,3vw,32px) 10px;
+      display:flex; align-items:center; justify-content:center; flex-direction:column;
+      background:transparent !important;
+      font-family:Poppins,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--ink); -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    #mm-reviews *,#mm-reviews *::before,#mm-reviews *::after{ box-sizing:border-box; }
+    .mm-wrap{ width:100%; max-width:var(--maxw); }
+
+    /* ===== Carousel ===== */
+    .mm-carousel{
+      position:relative; width:100%;
+      height:340px; /* wird per JS auf max Kartenhöhe gesetzt */
+      margin:6px 0 8px 0; padding:0; background:transparent;
+      display:flex; align-items:center; justify-content:center;
+      overflow:visible;
+    }
+    .mm-track{ position:relative; width:100%; height:100%; }
+
+    .mm-card{
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      width:min(520px,92%);
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+      transition:transform .45s cubic-bezier(.2,.9,.2,1), opacity .35s ease, filter .35s ease;
+      backface-visibility:hidden; overflow:hidden;
+    }
+    .mm-card .stars{ font-size:17px; color:#f6b042; letter-spacing:.4px; margin-bottom:6px; }
+    .mm-card .quote{ font-size:15.5px; line-height:1.55; margin-bottom:10px; }
+    .mm-card .meta{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      color:var(--muted); font-size:13.5px;
+      border-top:1px solid rgba(60,64,67,.08); padding-top:9px; margin-top:6px;
+    }
+    .mm-card .meta .who{ font-weight:600; color:var(--ink); }
+    .mm-card .meta .type{ color:var(--muted); text-align:right; }
+
+    /* Zustände (Desktop) */
+    .is-active{ transform:translate(-50%,-50%) translateZ(110px) scale(1.015); opacity:1; z-index:40; filter:none; background:#fff; }
+    .is-prev  { transform:translate(-50%,-50%) translateX(-32%) rotateY(11deg) translateZ(-40px) scale(.92);  opacity:.62; z-index:30; filter:grayscale(.08) brightness(.98); background:var(--ghost); }
+    .is-next  { transform:translate(-50%,-50%) translateX(32%)  rotateY(-11deg) translateZ(-40px) scale(.92);  opacity:.62; z-index:30; filter:grayscale(.08) brightness(.98); background:var(--ghost); }
+    .is-hide  { opacity:0; pointer-events:none; z-index:10; }
+
+    /* Pfeile */
+    .mm-arrow{
+      position:absolute; top:50%; transform:translateY(-50%);
+      width:40px; height:40px; border-radius:50%;
+      display:grid; place-items:center;
+      background:#fff; border:1px solid rgba(0,0,0,.1);
+      box-shadow:0 4px 16px rgba(0,0,0,.08);
+      color:var(--ink); cursor:pointer;
+      transition:transform .12s ease, background .2s ease; z-index:50;
+    }
+    .mm-arrow:hover{ transform:translateY(-50%) scale(1.04); background:#fafafa; }
+    .mm-arrow:active{ transform:translateY(-50%) scale(.98); }
+    .mm-arrow.left{ left:0; } .mm-arrow.right{ right:0; }
+    .mm-arrow svg{ width:22px; height:22px; display:block; }
+
+    /* ===== Google-Profil fix ===== */
+    .mm-gprof{
+      margin:10px auto 0; width:100%; max-width:var(--maxw);
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:12px 14px; border:1px solid rgba(60,64,67,.08); border-radius:12px;
+      background:#fff; box-shadow:0 6px 18px rgba(60,64,67,.06);
+      cursor:pointer; opacity:.6; transition:opacity .2s ease, box-shadow .2s ease;
+    }
+    .mm-gprof.enabled{ opacity:1; }
+    .mm-gleft{ display:flex; align-items:center; gap:10px; min-width:0; }
+    .mm-avatar{ width:40px; height:40px; aspect-ratio:1/1; border-radius:50%; overflow:hidden; background:linear-gradient(#efefef,#dcdcdc); border:1px solid rgba(0,0,0,.06); flex:0 0 40px; }
+    .mm-avatar img{ width:100%; height:100%; object-fit:cover; border-radius:50%; display:block; }
+    .mm-gtitles{ display:flex; flex-direction:column; min-width:0; }
+    .mm-gtitles .gtitle{ font-weight:600; color:var(--ink); font-size:14.5px; line-height:1.15; }
+    .mm-gtitles .gsub{ font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:420px; }
+    .mm-gmid{ display:flex; align-items:center; gap:8px; color:var(--ink); font-size:14px; white-space:nowrap; }
+    .mm-gscore{ font-weight:700; }
+    .mm-stars{ color:#f6b042; letter-spacing:.4px; }
+    .mm-count{ color:var(--muted); font-size:13px; }
+    .mm-gactions{ display:flex; align-items:center; }
+    .mm-btn{ appearance:none !important; border:none !important; border-radius:12px !important; padding:8px 12px !important; font-weight:700 !important; line-height:1 !important; background:var(--accent); color:#fff; opacity:.6; pointer-events:none; }
+
+    /* Tablet */
+    @media (max-width:900px){ .mm-card{ width:min(520px,94%); } }
+
+    /* ===== Mobile-Feinschliff ===== */
+    @media (max-width:640px){
+      .mm-card{ width:94% !important; box-shadow:none !important; border:1px solid rgba(60,64,67,.06); }
+      .is-active{ transform:translate(-50%,-50%) scale(1) !important; } /* kein 3D */
+      .is-prev,.is-next{ display:none !important; }                      /* keine Nachbarn */
+      .mm-arrow.left{ left:0 !important; } .mm-arrow.right{ right:0 !important; }  /* nicht abgeschnitten */
+
+      .mm-gprof{ flex-wrap:wrap; align-items:flex-start; row-gap:10px; }
+      .mm-gleft{ width:100%; }
+      .mm-gmid{ width:calc(100% - 110px); }         /* Platz für Button rechts */
+      .mm-gactions{ width:110px; justify-content:flex-end; }
+      .mm-btn{ opacity:1; }                         /* auf Mobile gut lesbar */
+    }
+
+    /* Fallback NUR solange JS noch nicht ready ist */
+    #mmTrack[data-mm-ready="0"] > article:first-child{
+      position:relative; left:auto; top:auto; transform:none; opacity:1; z-index:1;
+    }
+  </style>
+
+  <div class="mm-wrap">
+    <div class="mm-carousel" role="region" aria-label="Testimonials Karussell">
+      <div class="mm-track" id="mmTrack" data-mm-ready="0"></div>
+
+      <button id="mmPrev" class="mm-arrow left" aria-label="Vorherige Bewertung" title="Vorherige">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="currentColor"/></svg>
+      </button>
+      <button id="mmNext" class="mm-arrow right" aria-label="Nächste Bewertung" title="Nächste">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59 10 18l6-6-6-6-1.41 1.41L13.17 12z" fill="currentColor"/></svg>
+      </button>
+    </div>
+
+    <!-- Google-Profil -->
+    <div id="mmGProf" class="mm-gprof" role="button" tabindex="0" aria-label="Zum Google-Business-Profil öffnen">
+      <div class="mm-gleft">
+        <div class="mm-avatar"><img id="mmGImg" alt="" style="display:none;"></div>
+        <div class="mm-gtitles">
+          <div id="mmGName" class="gtitle">MietMichBox – Musikbox Vermietung</div>
+          <div id="mmGSub"  class="gsub">Event- &amp; Party-Sound · NRW</div>
+        </div>
+      </div>
+      <div class="mm-gmid">
+        <span id="mmGScore" class="mm-gscore">4,9</span>
+        <span class="mm-stars" aria-hidden="true">★★★★★</span>
+        <span id="mmGCount" class="mm-count">(27&nbsp;Bewertungen)</span>
+      </div>
+      <div class="mm-gactions">
+        <button id="mmGBtn" class="mm-btn" aria-disabled="true">Zum Profil</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    /* Daten */
+    const GOOGLE_PROFILE = {
+      url: "https://share.google/gH52JHvV3vwQ5Fxgp",  /* <-- Link einsetzen */
+      name: "MietMichBox – Musikbox Vermietung",
+      subtitle: "Event- & Party-Sound · NRW",
+      score: "4,9", reviews: 27, image: ""
+    };
+
+    const reviews = [
+      { stars:5, quote:"Schnell geliefert, angeschlossen, läuft. Klang stark, Bass satt – genau was wir für die Geburtstagsparty brauchten!", name:"Svenja Peters", tag:"Privat · Wesel" },
+      { stars:5, quote:"Wir haben die Musikbox für den 30. Geburtstag meines Mannes gemietet. Bedienung super einfach, Sound richtig kräftig – die Gäste waren begeistert. Buchen wir wieder.", name:"Anna Becker", tag:"Privat · Düsseldorf" },
+      { stars:5, quote:"Für unser Kanzlei-Sommerfest hat die Box die Stimmung getragen. Besonders stark: unkomplizierter Aufbau, sofort startklar und draußen genug Reserven in der Lautstärke. Kommunikation und Abwicklung waren professionell und schnell – klare Empfehlung.", name:"Müller & Partner Steuerkanzlei", tag:"Unternehmen · Essen" },
+      { stars:5, quote:"Als mobiler DJ brauche ich verlässlichen Druck im Bass und saubere Höhen. Die Box ist robust, flott transportiert und ideal für spontane oder kleinere Gigs. Hat mich überzeugt.", name:"DJ Lukas Weber", tag:"DJ · Dortmund" },
+      { stars:5, quote:"Pre-Party vorm Festival: anstöpseln und los. Ganz andere Liga als typische Bluetooth-Lautsprecher – richtig gut!", name:"Jonas Schulte", tag:"Privat · Münster" },
+      { stars:5, quote:"Unsere Weihnachtsfeier war dank der Musikbox deutlich stimmungsvoller. Reden waren klar verständlich, danach Tanzfläche ohne Aussetzer. Unkomplizierte Übergabe, faire Konditionen – wir greifen beim nächsten Event wieder darauf zurück.", name:"Bäckerei Hagemann", tag:"Unternehmen · Bochum" },
+      { stars:4, quote:"Solide, laut, einfach. Für unseren Hof völlig ausreichend.", name:"Markus Voss", tag:"Privat · Oberhausen" },
+      { stars:5, quote:"Gartenhochzeit mit ca. 70 Leuten: klare Sprache für die Traurede, abends genug Punch zum Tanzen. Null Technik-Stress.", name:"Lisa & Marco Hoffmann", tag:"Privat · Bochum" },
+      { stars:5, quote:"In 3 Minuten aufgebaut. Viele fragten, woher die Box kommt – hat richtig Eindruck gemacht.", name:"Tim Richter", tag:"Privat · Krefeld" },
+      { stars:5, quote:"Für unser Hof-Event ideal: kräftiger, klarer Klang und kinderleichte Bedienung. Ansagen gingen nicht im Sound unter – sehr gelungenes Setup.", name:"Brauhaus am Wall", tag:"Unternehmen · Wuppertal" },
+      { stars:5, quote:"Team-Event in der Halle: Wir brauchten kompakten, zuverlässigen Sound. Die Box füllte den Raum problemlos, ohne zu dröhnen. Schnelle Abstimmung im Vorfeld, pünktliche Lieferung, top Gesamtpaket.", name:"Schneider IT-Services", tag:"Unternehmen · Köln" },
+      { stars:5, quote:"Für Afterwork-Sets und kleinere Bookings super – stabil, laut genug und ohne Schnickschnack einsatzbereit.", name:"DJ Mia Schneider", tag:"DJ · Duisburg" }
+    ];
+
+    /* Elemente */
+    const root = document.getElementById('mm-reviews');
+    const track = root.querySelector('#mmTrack');
+    const prevBtn = root.querySelector('#mmPrev');
+    const nextBtn = root.querySelector('#mmNext');
+    const carousel = root.querySelector('.mm-carousel');
+
+    const isMobile = ()=> matchMedia('(max-width:640px)').matches;
+    const starRow = n => "★".repeat(n) + "☆".repeat(5-n);
+
+    /* Karten rendern */
+    let cards = [];
+    function createCard(r,i){
+      const el = document.createElement('article');
+      el.className = 'mm-card is-hide';
+      el.setAttribute('role','group');
+      el.setAttribute('aria-roledescription','slide');
+      el.setAttribute('aria-label', `Bewertung ${i+1} von ${reviews.length}`);
+      el.innerHTML = `
+        <div class="stars" aria-label="${r.stars} von 5 Sternen">${starRow(r.stars)}</div>
+        <div class="quote">„${r.quote}“</div>
+        <div class="meta"><div class="who">${r.name}</div><div class="type">${r.tag}</div></div>`;
+      return el;
+    }
+    function render(){
+      cards=[]; track.innerHTML='';
+      reviews.forEach((r,i)=>{ const c=createCard(r,i); cards.push(c); track.appendChild(c); });
+    }
+
+    /* Höhe der längsten Karte messen */
+    let maxH = 340;
+    function measureMax(){
+      const meas = document.createElement('div');
+      const w = Math.min(carousel.clientWidth || 600, 520);
+      meas.style.cssText = `position:fixed;left:-9999px;top:-9999px;width:${w}px;padding:0;margin:0`;
+      document.body.appendChild(meas);
+      let h=0;
+      cards.forEach(c=>{
+        const x=c.cloneNode(true);
+        x.className='mm-card is-active'; x.style.position='static'; x.style.transform='none'; x.style.boxShadow='none';
+        meas.appendChild(x); h=Math.max(h, x.offsetHeight); meas.removeChild(x);
+      });
+      document.body.removeChild(meas);
+      maxH = Math.max(280, h);
+      carousel.style.height = maxH+'px';
+    }
+
+    /* Sichtbare States setzen */
+    let idx = 0;
+    function apply(){
+      const n=cards.length; if(!n) return;
+      cards.forEach(c=> c.className='mm-card is-hide');
+      const a = cards[(idx%n+n)%n];
+      const p = cards[((idx-1)%n+n)%n];
+      const nx= cards[((idx+1)%n+n)%n];
+      a.classList.remove('is-hide'); a.classList.add('is-active');
+      if(!isMobile()){ p.classList.remove('is-hide'); p.classList.add('is-prev'); nx.classList.remove('is-hide'); nx.classList.add('is-next'); }
+      carousel.style.height = maxH+'px';
+    }
+    function next(){ idx=(idx+1)%cards.length; apply(); }
+    function prev(){ idx=(idx-1+cards.length)%cards.length; apply(); }
+
+    /* Swipe */
+    function bindSwipe(){
+      let startX=null;
+      track.addEventListener('touchstart',e=>{ startX=e.touches[0].clientX; },{passive:true});
+      track.addEventListener('touchend',e=>{
+        if(startX===null) return;
+        const dx=e.changedTouches[0].clientX-startX;
+        if(Math.abs(dx)>40){ dx<0?next():prev(); }
+        startX=null;
+      });
+    }
+
+    /* Google-Zeile */
+    (function initG(){
+      const row=root.querySelector('#mmGProf'); const btn=root.querySelector('#mmGBtn');
+      root.querySelector('#mmGName').textContent=GOOGLE_PROFILE.name||"Unternehmensprofil";
+      root.querySelector('#mmGSub').textContent=GOOGLE_PROFILE.subtitle||"Kurzbeschreibung / Kategorie";
+      root.querySelector('#mmGScore').textContent=GOOGLE_PROFILE.score||"4,9";
+      root.querySelector('#mmGCount').textContent=`(${(GOOGLE_PROFILE.reviews??27)}\u00A0Bewertungen)`;
+      if(GOOGLE_PROFILE.image){
+        const img=root.querySelector('#mmGImg'); img.src=GOOGLE_PROFILE.image; img.style.display='block'; img.alt=GOOGLE_PROFILE.name||"Profilbild";
+      }
+      const url=GOOGLE_PROFILE.url;
+      if(url && /^https?:\/\//i.test(url)){
+        row.classList.add('enabled'); btn.style.opacity='1'; btn.style.pointerEvents='auto'; btn.setAttribute('aria-disabled','false');
+        const open=()=>window.open(url,'_blank','noopener');
+        row.addEventListener('click',open);
+        row.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); }});
+        btn.addEventListener('click',e=>{ e.stopPropagation(); open(); });
+      }
+    })();
+
+    /* Boot */
+    function boot(){
+      render(); measureMax();
+      idx = Math.floor(Math.random()*cards.length);
+      apply();
+      prevBtn.addEventListener('click',prev);
+      nextBtn.addEventListener('click',next);
+      bindSwipe();
+      window.addEventListener('resize', ()=>{ measureMax(); apply(); });
+      // Fallback-Flag entfernen => verhindert die "oben links"-Fehlposition
+      track.setAttribute('data-mm-ready','1');
+    }
+    if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', boot); }
+    else { boot(); }
+  })();
+  </script>
+</section>
