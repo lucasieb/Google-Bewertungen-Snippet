@@ -3,7 +3,7 @@
     :root{
       --ink:#202124; --muted:#5f6368; --card:#ffffff; --ghost:#f1f3f4;
       --accent:#1a73e8; --shadow:0 8px 24px rgba(60,64,67,.12);
-      --radius:14px; --maxw:1100px; --arrow-offset:clamp(44px,8vw,72px);
+      --radius:14px; --maxw:1100px; --arrow-offset:clamp(40px,6.6vw,64px);
     }
 
     /* wirklich transparent */
@@ -39,7 +39,7 @@
       backface-visibility:hidden; overflow:hidden;
     }
     .mm-card .stars{ font-size:17px; color:#f6b042; letter-spacing:.4px; margin-bottom:6px; }
-    .mm-card .quote{ font-size:15.5px; line-height:1.55; margin-bottom:10px; }
+    .mm-card .quote{ font-size:15.5px; line-height:1.55; margin-bottom:10px; position:relative; }
     .mm-card .meta{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       color:var(--muted); font-size:13.5px;
@@ -48,10 +48,19 @@
     .mm-card .meta .who{ font-weight:600; color:var(--ink); }
     .mm-card .meta .type{ color:var(--muted); text-align:right; }
 
+    .mm-card .more-toggle{
+      display:none; margin:0 0 10px; padding:0; border:none; background:none;
+      color:var(--accent); font-weight:600; font-size:14px; cursor:pointer;
+      align-items:center; gap:6px;
+    }
+    .mm-card .more-toggle:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:6px; }
+    .mm-card .more-toggle svg{ width:16px; height:16px; transition:transform .2s ease; }
+    .mm-card.is-expanded .more-toggle svg{ transform:rotate(180deg); }
+
     /* Zustände (Desktop) */
     .is-active{ transform:translate(-50%,-50%) translateZ(70px) scale(1); opacity:1; z-index:40; filter:none; background:#fff; }
-    .is-prev  { transform:translate(-50%,-50%) translateX(-62%) translateZ(-60px) scale(.8); opacity:.52; z-index:25; filter:grayscale(.12) brightness(.95); background:var(--ghost); }
-    .is-next  { transform:translate(-50%,-50%) translateX(62%)  translateZ(-60px) scale(.8); opacity:.52; z-index:25; filter:grayscale(.12) brightness(.95); background:var(--ghost); }
+    .is-prev  { transform:translate(-50%,-50%) translateX(-68%) translateZ(-120px) scale(.68); opacity:.36; z-index:20; filter:grayscale(.2) brightness(.92); background:var(--ghost); }
+    .is-next  { transform:translate(-50%,-50%) translateX(68%)  translateZ(-120px) scale(.68); opacity:.36; z-index:20; filter:grayscale(.2) brightness(.92); background:var(--ghost); }
     .is-hide  { opacity:0; pointer-events:none; z-index:10; }
 
     /* Pfeile */
@@ -66,8 +75,8 @@
     }
     .mm-arrow:hover{ transform:translateY(-50%) scale(1.04); background:#fafafa; }
     .mm-arrow:active{ transform:translateY(-50%) scale(.98); }
-    .mm-arrow.left{ left:calc(var(--arrow-offset) * -0.55); }
-    .mm-arrow.right{ right:calc(var(--arrow-offset) * -0.55); }
+    .mm-arrow.left{ left:calc(var(--arrow-offset) * -0.42); }
+    .mm-arrow.right{ right:calc(var(--arrow-offset) * -0.42); }
     .mm-arrow svg{ width:22px; height:22px; display:block; }
 
     /* ===== Google-Profil fix ===== */
@@ -99,8 +108,8 @@
 
     /* ===== Mobile-Feinschliff ===== */
     @media (max-width:640px){
-      .mm-carousel{ padding:0 40px; }
-      .mm-card{ width:92% !important; box-shadow:none !important; border:1px solid rgba(60,64,67,.06); }
+      .mm-carousel{ padding:0 34px; }
+      .mm-card{ width:96% !important; box-shadow:none !important; border:1px solid rgba(60,64,67,.06); }
       .is-active{ transform:translate(-50%,-50%) scale(1) !important; } /* kein 3D */
       .is-prev,.is-next{ display:none !important; }                      /* keine Nachbarn */
       .mm-arrow.left{ left:12px !important; } .mm-arrow.right{ right:12px !important; }  /* nicht abgeschnitten */
@@ -110,6 +119,16 @@
       .mm-gtitles .gsub,.mm-gtitles .gmeta{ max-width:100%; }
       .mm-gactions{ width:100%; justify-content:center; }
       .mm-btn{ width:100%; max-width:220px; }
+
+      .mm-card.has-more .more-toggle{ display:inline-flex; }
+      .mm-card.is-collapsed .quote{
+        display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:7;
+        overflow:hidden; padding-bottom:4px;
+      }
+      .mm-card.is-collapsed .quote::after{
+        content:""; position:absolute; inset:auto 0 0 0; height:44px;
+        background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.92) 55%, rgba(255,255,255,1) 100%);
+      }
     }
 
     /* Fallback NUR solange JS noch nicht ready ist */
@@ -176,6 +195,8 @@
       { stars:5, quote:"Für Afterwork-Sets und kleinere Bookings super – stabil, laut genug und ohne Schnickschnack einsatzbereit.", name:"DJ Mia Schneider", tag:"DJ · Duisburg" }
     ];
 
+    const LONG_QUOTE_THRESHOLD = 260;
+
     /* Elemente */
     const root = document.getElementById('mm-reviews');
     const track = root.querySelector('#mmTrack');
@@ -194,15 +215,105 @@
       el.setAttribute('role','group');
       el.setAttribute('aria-roledescription','slide');
       el.setAttribute('aria-label', `Bewertung ${i+1} von ${reviews.length}`);
-      el.innerHTML = `
-        <div class="stars" aria-label="${r.stars} von 5 Sternen">${starRow(r.stars)}</div>
-        <div class="quote">„${r.quote}“</div>
-        <div class="meta"><div class="who">${r.name}</div><div class="type">${r.tag}</div></div>`;
+
+      const stars = document.createElement('div');
+      stars.className='stars';
+      stars.setAttribute('aria-label', `${r.stars} von 5 Sternen`);
+      stars.textContent = starRow(r.stars);
+
+      const quote = document.createElement('div');
+      quote.className='quote';
+      quote.textContent = `„${r.quote}“`;
+
+      const meta = document.createElement('div');
+      meta.className='meta';
+      const who = document.createElement('div');
+      who.className='who';
+      who.textContent = r.name;
+      const type = document.createElement('div');
+      type.className='type';
+      type.textContent = r.tag;
+      meta.append(who,type);
+
+      const isLong = (r.quote||'').length > LONG_QUOTE_THRESHOLD;
+      if(isLong){
+        el.dataset.long='1';
+      }
+
+      el.append(stars, quote);
+
+      if(isLong){
+        const moreBtn=document.createElement('button');
+        moreBtn.type='button';
+        moreBtn.className='more-toggle';
+        const label=document.createElement('span');
+        label.textContent='Mehr anzeigen';
+        const icon=document.createElementNS('http://www.w3.org/2000/svg','svg');
+        icon.setAttribute('viewBox','0 0 24 24');
+        icon.setAttribute('aria-hidden','true');
+        const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d','M7 10l5 5 5-5z');
+        path.setAttribute('fill','currentColor');
+        icon.appendChild(path);
+        moreBtn.append(label, icon);
+        moreBtn.setAttribute('aria-expanded','false');
+        moreBtn.addEventListener('click',()=>{
+          const expanded = el.classList.toggle('is-expanded');
+          if(expanded){
+            el.classList.remove('is-collapsed');
+            label.textContent='Weniger anzeigen';
+          }else{
+            el.classList.add('is-collapsed');
+            label.textContent='Mehr anzeigen';
+          }
+          moreBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+          measureMax();
+        });
+        el.appendChild(moreBtn);
+      }
+
+      el.appendChild(meta);
       return el;
     }
     function render(){
       cards=[]; track.innerHTML='';
       reviews.forEach((r,i)=>{ const c=createCard(r,i); cards.push(c); track.appendChild(c); });
+    }
+
+    function updateTruncationStates(){
+      const mobile=isMobile();
+      cards.forEach(card=>{
+        const isLong=card.dataset.long==='1';
+        const toggle=card.querySelector('.more-toggle');
+        const label=toggle ? toggle.querySelector('span') : null;
+        if(!isLong){
+          card.classList.remove('has-more','is-collapsed','is-expanded');
+          if(toggle){ toggle.hidden=true; toggle.setAttribute('aria-expanded','false'); if(label) label.textContent='Mehr anzeigen'; }
+          return;
+        }
+        card.classList.add('has-more');
+        if(!toggle) return;
+        if(mobile){
+          toggle.hidden=false;
+          if(!card.classList.contains('is-expanded')){
+            card.classList.add('is-collapsed');
+            if(label) label.textContent='Mehr anzeigen';
+            toggle.setAttribute('aria-expanded','false');
+          }else{
+            card.classList.remove('is-collapsed');
+            if(label) label.textContent='Weniger anzeigen';
+            toggle.setAttribute('aria-expanded','true');
+          }
+        }else{
+          toggle.hidden=true;
+          card.classList.remove('is-collapsed');
+          if(card.classList.contains('is-expanded')){
+            card.classList.remove('is-expanded');
+          }
+          if(label) label.textContent='Mehr anzeigen';
+          toggle.setAttribute('aria-expanded','false');
+        }
+      });
     }
 
     /* Höhe der längsten Karte messen */
@@ -215,7 +326,10 @@
       let h=0;
       cards.forEach(c=>{
         const x=c.cloneNode(true);
-        x.className='mm-card is-active'; x.style.position='static'; x.style.transform='none'; x.style.boxShadow='none';
+        x.className=c.className;
+        x.classList.remove('is-prev','is-next','is-hide');
+        x.classList.add('is-active');
+        x.style.position='static'; x.style.transform='none'; x.style.boxShadow='none';
         meas.appendChild(x); h=Math.max(h, x.offsetHeight); meas.removeChild(x);
       });
       document.body.removeChild(meas);
@@ -227,12 +341,21 @@
     let idx = 0;
     function apply(){
       const n=cards.length; if(!n) return;
-      cards.forEach(c=> c.className='mm-card is-hide');
+      cards.forEach(c=>{
+        c.classList.remove('is-active','is-prev','is-next');
+        c.classList.add('is-hide');
+      });
       const a = cards[(idx%n+n)%n];
       const p = cards[((idx-1)%n+n)%n];
       const nx= cards[((idx+1)%n+n)%n];
-      a.classList.remove('is-hide'); a.classList.add('is-active');
-      if(!isMobile()){ p.classList.remove('is-hide'); p.classList.add('is-prev'); nx.classList.remove('is-hide'); nx.classList.add('is-next'); }
+      a.classList.remove('is-hide');
+      a.classList.add('is-active');
+      if(!isMobile()){
+        p.classList.remove('is-hide');
+        p.classList.add('is-prev');
+        nx.classList.remove('is-hide');
+        nx.classList.add('is-next');
+      }
       carousel.style.height = maxH+'px';
     }
     function next(){ idx=(idx+1)%cards.length; apply(); }
@@ -320,18 +443,39 @@
     }
 
     async function resolveProfile(url){
-      try{
-        const res=await fetch(url,{mode:'cors'});
-        if(!res.ok) throw new Error('Request failed');
-        const text=await res.text();
-        const doc=new DOMParser().parseFromString(text,'text/html');
-        const info=extractProfileFromDocument(doc);
-        info._baseUrl=res.url||url;
-        return info;
-      }catch(err){
-        console.warn('[mm-reviews] Profil konnte nicht geladen werden', err);
-        return {};
+      if(!url) return {};
+      const attempts=[];
+      const cleaned=url.trim();
+      if(cleaned) attempts.push(cleaned);
+      if(/^https?:\/\//i.test(cleaned) && !/^https?:\/\/r\.jina\.ai\//i.test(cleaned)){
+        const proxied=`https://r.jina.ai/${cleaned}`;
+        if(!attempts.includes(proxied)) attempts.push(proxied);
       }
+      let bestInfo=null;
+      let bestScore=-1;
+      let lastError=null;
+      for(const target of attempts){
+        try{
+          const res=await fetch(target,{mode:'cors'});
+          if(!res.ok) throw new Error(`Request failed (${res.status})`);
+          const text=await res.text();
+          const doc=new DOMParser().parseFromString(text,'text/html');
+          const info=extractProfileFromDocument(doc) || {};
+          const resolvedUrl=(res.url && res.url.startsWith('https://r.jina.ai/')) ? cleaned : (res.url||cleaned);
+          const hasData=Object.keys(info).length>0;
+          info._baseUrl=resolvedUrl;
+          const coreKeys=['name','subtitle','locality','image'];
+          const score=coreKeys.reduce((acc,key)=> acc + (info[key]?1:0), 0);
+          if(hasData && (score>=3 || target.startsWith('https://r.jina.ai/'))){
+            return info;
+          }
+          if(score>bestScore){ bestInfo=info; bestScore=score; }
+        }catch(err){
+          lastError=err;
+        }
+      }
+      if(lastError){ console.warn('[mm-reviews] Profil konnte nicht vollständig geladen werden', lastError); }
+      return bestInfo || {};
     }
 
     function formatNumber(value){
@@ -416,13 +560,15 @@
 
     /* Boot */
     function boot(){
-      render(); measureMax();
+      render();
+      updateTruncationStates();
+      measureMax();
       idx = Math.floor(Math.random()*cards.length);
       apply();
       prevBtn.addEventListener('click',prev);
       nextBtn.addEventListener('click',next);
       bindSwipe();
-      window.addEventListener('resize', ()=>{ measureMax(); apply(); });
+      window.addEventListener('resize', ()=>{ updateTruncationStates(); measureMax(); apply(); });
       // Fallback-Flag entfernen => verhindert die "oben links"-Fehlposition
       track.setAttribute('data-mm-ready','1');
     }
