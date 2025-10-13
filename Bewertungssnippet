@@ -373,25 +373,81 @@
       });
     }
 
+    function firstString(value, seen=new Set()){
+      if(value===undefined || value===null) return '';
+      if(typeof value==='string'){ return value; }
+      if(typeof value==='number' || typeof value==='boolean'){ return String(value); }
+      if(seen.has(value)) return '';
+      if(Array.isArray(value)){
+        for(const entry of value){
+          const res=firstString(entry, seen);
+          if(res) return res;
+        }
+        return '';
+      }
+      if(typeof value==='object'){
+        seen.add(value);
+        const candidates=[
+          value.url,
+          value.contentUrl,
+          value.logo,
+          value.image,
+          value.photo,
+          value.thumbnail,
+          value.thumbnailUrl,
+          value.src,
+          value.href,
+          value['@id'],
+          value.name,
+          value.text,
+        ];
+        for(const candidate of candidates){
+          const res=firstString(candidate, seen);
+          if(res){
+            seen.delete(value);
+            return res;
+          }
+        }
+        seen.delete(value);
+      }
+      return '';
+    }
+
+    function cleanText(value){
+      const str=firstString(value);
+      return str?str.trim():'';
+    }
+
     function parseJsonLd(doc){
       const info={};
       const scripts=Array.from(doc.querySelectorAll('script[type="application/ld+json"]'));
       const pushData=data=>{
         if(!data || typeof data!=='object') return;
         const types=[data['@type']].flat().filter(Boolean).map(t=>String(t).toLowerCase());
-        const isBusiness=types.some(t=>/business|organization|store|service/.test(t));
+        const isBusiness=types.some(t=>/business|organization|store|service|place/.test(t));
         if(!isBusiness) return;
-        if(data.name && !info.name){ info.name=data.name; }
-        if(data.image && !info.image){ info.image=Array.isArray(data.image)?data.image[0]:data.image; }
-        if(data.description && !info.subtitle){ info.subtitle=data.description; }
+        const name=cleanText(data.name);
+        if(name && !info.name){ info.name=name; }
+        const imageCandidate=cleanText(data.image) || cleanText(data.logo) || cleanText(data.photo) || cleanText(data.image?.url);
+        if(imageCandidate && !info.image){ info.image=imageCandidate; }
+        const description=cleanText(data.description) || cleanText(data.slogan) || cleanText(data.tagline);
+        if(description && !info.subtitle){ info.subtitle=description; }
         const address=data.address;
         if(address && !info.locality){
-          if(typeof address==='string'){ info.locality=address; }
-          else if(typeof address==='object'){
-            const {addressLocality,addressRegion,addressCountry}=address;
-            const parts=[addressLocality,addressRegion,addressCountry].filter(Boolean);
-            if(parts.length){ info.locality=parts.join(', '); }
-            else if(address.streetAddress){ info.locality=address.streetAddress; }
+          const addresses=Array.isArray(address)?address:[address];
+          for(const entry of addresses){
+            if(typeof entry==='string'){
+              const txt=cleanText(entry);
+              if(txt){ info.locality=txt; break; }
+            }else if(entry && typeof entry==='object'){
+              const locality=cleanText(entry.addressLocality);
+              const region=cleanText(entry.addressRegion);
+              const country=cleanText(entry.addressCountry);
+              const street=cleanText(entry.streetAddress);
+              const parts=[locality,region,country].filter(Boolean);
+              if(parts.length){ info.locality=parts.join(', '); break; }
+              if(street){ info.locality=street; break; }
+            }
           }
         }
         const rating=data.aggregateRating;
@@ -404,6 +460,14 @@
             const num=Number(rating.reviewCount);
             info.reviewCount=!Number.isNaN(num)?num:rating.reviewCount;
           }
+        }
+        if(!info.rating && data.ratingValue){
+          const num=Number(data.ratingValue);
+          info.rating=!Number.isNaN(num)?num:data.ratingValue;
+        }
+        if(!info.reviewCount && data.reviewCount){
+          const num=Number(data.reviewCount);
+          info.reviewCount=!Number.isNaN(num)?num:data.reviewCount;
         }
         if(data.servesCuisine && !info.subtitle){ info.subtitle=data.servesCuisine; }
         if(data.category && !info.subtitle){ info.subtitle=data.category; }
@@ -421,9 +485,10 @@
     }
 
     function absoluteUrl(value, base){
-      if(!value) return '';
-      try{ return new URL(value, base).href; }
-      catch(_){ return value; }
+      const str=cleanText(value);
+      if(!str) return '';
+      try{ return new URL(str, base).href; }
+      catch(_){ return str; }
     }
 
     function extractProfileFromDocument(doc){
@@ -433,11 +498,22 @@
         if(!el) return '';
         return attr==='text'? (el.textContent||'').trim(): (el.getAttribute(attr)||'').trim();
       };
-      if(!info.name){ info.name=pick('meta[property="og:title"],meta[name="og:title"]') || pick('title','text'); }
-      if(!info.image){ info.image=pick('meta[property="og:image"],meta[name="og:image"]'); }
-      if(!info.subtitle){ info.subtitle=pick('meta[property="og:description"],meta[name="description"]'); }
+      if(!info.name){
+        info.name=cleanText(pick('meta[property="og:title"],meta[name="og:title"],meta[itemprop="name"],meta[name="twitter:title"]')) || cleanText(pick('title','text'));
+      }
+      if(!info.image){
+        info.image=cleanText(pick('meta[property="og:image:secure_url"],meta[property="og:image"],meta[name="og:image"],meta[name="twitter:image"],meta[name="twitter:image:src"],meta[itemprop="image"]'))
+          || cleanText(pick('link[rel="image_src"]','href'))
+          || cleanText(pick('link[rel*="icon"]','href'));
+      }
+      if(!info.subtitle){
+        info.subtitle=cleanText(pick('meta[property="og:description"],meta[name="og:description"],meta[name="description"],meta[name="twitter:description"],meta[itemprop="description"]'));
+      }
       if(!info.locality){
-        info.locality=pick('[itemprop="addressLocality"]','content') || pick('[itemprop="addressLocality"]','text');
+        info.locality=cleanText(pick('[itemprop="addressLocality"]','content') || pick('[itemprop="addressLocality"]','text'))
+          || cleanText(pick('[itemprop="addressRegion"]','content'))
+          || cleanText(pick('meta[property="business:contact_data:street_address"]'))
+          || cleanText(pick('meta[name="og:street-address"]'));
       }
       return info;
     }
@@ -710,36 +786,48 @@
         const canOpen=profileUrl && /^https?:\/\//i.test(profileUrl);
         const ratingVal=merged.rating;
         const reviewCount=merged.reviewCount;
-        nameEl.textContent=merged.name||'Unternehmensprofil';
-        subEl.textContent=(merged.subtitle||'Kurzbeschreibung / Kategorie').trim();
-        const metaBits=[];
-        if(merged.locality){ metaBits.push(merged.locality); }
-        if(metaBits.length){
-          metaEl.textContent=metaBits.join(' · ');
+        const displayName=cleanText(merged.name) || 'Unternehmensprofil';
+        const subtitle=cleanText(merged.subtitle) || 'Kurzbeschreibung / Kategorie';
+        const locality=cleanText(merged.locality);
+        nameEl.textContent=displayName;
+        subEl.textContent=subtitle;
+        if(locality){
+          metaEl.textContent=locality;
           metaEl.hidden=false;
         }else{
           metaEl.textContent='';
           metaEl.hidden=true;
         }
-        if(merged.image){
-          imgEl.src=absoluteUrl(merged.image, imageBase);
+        const imageSource=absoluteUrl(merged.image || merged.logo || merged.photo, imageBase);
+        if(imageSource){
+          imgEl.src=imageSource;
           imgEl.style.display='block';
-          imgEl.alt=merged.name||'Profilbild';
+          imgEl.alt=displayName||'Profilbild';
         }else{
           imgEl.removeAttribute('src');
           imgEl.style.display='none';
         }
         const tooltipParts=[];
-        if(merged.name) tooltipParts.push(merged.name);
-        if(merged.locality) tooltipParts.push(merged.locality);
-        if(ratingVal && reviewCount){
-          tooltipParts.push(`Bewertung ${typeof ratingVal==='number'?ratingVal.toLocaleString('de-DE',{minimumFractionDigits:1, maximumFractionDigits:1}):ratingVal} aus ${formatNumber(reviewCount)} Bewertungen`);
+        if(displayName) tooltipParts.push(displayName);
+        if(locality) tooltipParts.push(locality);
+        const ratingNumeric=typeof ratingVal==='number' ? ratingVal : (typeof ratingVal==='string' ? Number(ratingVal.replace(',','.')) : NaN);
+        const ratingDisplay=Number.isFinite(ratingNumeric)
+          ? ratingNumeric.toLocaleString('de-DE',{minimumFractionDigits:1, maximumFractionDigits:1})
+          : cleanText(ratingVal);
+        const reviewDisplay=typeof reviewCount==='number'
+          ? formatNumber(reviewCount)
+          : cleanText(reviewCount);
+        const ratingSentence=(ratingDisplay && reviewDisplay)
+          ? `Bewertung ${ratingDisplay} aus ${reviewDisplay} Bewertungen`
+          : '';
+        if(ratingSentence){
+          tooltipParts.push(ratingSentence);
         }
-        row.setAttribute('title', tooltipParts.join(' · '));
+        row.setAttribute('title', tooltipParts.filter(Boolean).join(' · '));
         const ariaLabel=[
-          merged.name||'Google Unternehmensprofil',
-          merged.locality || null,
-          ratingVal && reviewCount ? `Bewertung ${typeof ratingVal==='number'?ratingVal.toLocaleString('de-DE',{minimumFractionDigits:1, maximumFractionDigits:1}):ratingVal} aus ${formatNumber(reviewCount)} Bewertungen` : null,
+          displayName||'Google Unternehmensprofil',
+          locality || null,
+          ratingSentence || null,
           canOpen ? 'öffnen' : 'Profilinformation'
         ].filter(Boolean).join(', ');
         row.setAttribute('aria-label', ariaLabel);
