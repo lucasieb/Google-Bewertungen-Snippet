@@ -38,7 +38,12 @@
       transition:transform .45s cubic-bezier(.2,.9,.2,1), opacity .35s ease, filter .35s ease;
       backface-visibility:hidden; overflow:hidden;
     }
-    .mm-card .stars{ font-size:17px; color:#f6b042; letter-spacing:.4px; margin-bottom:6px; }
+    .mm-card .head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+    .mm-card .source{ display:inline-flex; align-items:center; gap:6px; font-weight:600; font-size:13.5px; color:var(--muted); letter-spacing:.3px; text-transform:none; }
+    .mm-card .source svg{ width:18px; height:18px; display:block; }
+    .mm-card .source span{ display:block; }
+    .mm-card .head .stars{ margin:0 0 0 auto; }
+    .mm-card .stars{ font-size:17px; color:#f6b042; letter-spacing:.4px; }
     .mm-card .quote{ font-size:15.5px; line-height:1.55; margin-bottom:10px; position:relative; }
     .mm-card .meta{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -150,17 +155,17 @@
     </div>
 
     <!-- Google-Profil -->
-    <div id="mmGProf" class="mm-gprof" role="button" tabindex="0" aria-label="Zum Google-Business-Profil öffnen">
+    <div id="mmGProf" class="mm-gprof" role="button" tabindex="0" aria-label="Google-Bewertungen aufrufen">
       <div class="mm-gleft">
         <div class="mm-avatar"><img id="mmGImg" alt="" style="display:none;"></div>
         <div class="mm-gtitles">
-          <div id="mmGName" class="gtitle">MietMichBox – Musikbox Vermietung</div>
-          <div id="mmGSub"  class="gsub">Event- &amp; Party-Sound · NRW</div>
-          <div id="mmGMeta" class="gmeta">NRW</div>
+          <div id="mmGName" class="gtitle">Butterblume Blumen &amp; Geschenke</div>
+          <div id="mmGSub"  class="gsub">Florist · Blumen &amp; Geschenkideen</div>
+          <div id="mmGMeta" class="gmeta">Florist in Deutschland · ⭐️ 4,9 · 87 Google-Bewertungen</div>
         </div>
       </div>
       <div class="mm-gactions">
-        <button id="mmGBtn" class="mm-btn" type="button" aria-disabled="true">Zum Profil</button>
+        <button id="mmGBtn" class="mm-btn" type="button" aria-disabled="true">Jetzt auf Google bewerten</button>
       </div>
     </div>
   </div>
@@ -169,30 +174,26 @@
   (function(){
     /* Daten */
     const GOOGLE_PROFILE = {
-      url: "https://share.google/gH52JHvV3vwQ5Fxgp",  /* <-- Link einsetzen */
+      url: "https://share.google/VIHwvNVoxddZ96EHF",
       fallback: {
-        name: "MietMichBox – Musikbox Vermietung",
-        subtitle: "Event- & Party-Sound · NRW",
-        locality: "NRW",
+        name: "Butterblume Blumen & Geschenke",
+        subtitle: "Florist · Blumen & Geschenkideen",
+        locality: "Florist in Deutschland",
         rating: "4,9",
-        reviewCount: 27,
-        image: ""
+        reviewCount: 87,
+        image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23202224' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M80 92c-11 0-20 9-20 20s9 20 20 20 20-9 20-20-9-20-20-20z'/%3E%3Cpath d='M80 84c-6-28-2-44 14-58 12-10 30-9 30 6 0 14-18 27-44 52z'/%3E%3Cpath d='M76 84c6-28 2-44-14-58-12-10-30-9-30 6 0 14 18 27 44 52z'/%3E%3Cpath d='M80 86c27-18 44-24 62-16 13 6 20 22 6 28-13 6-32-4-68-12z'/%3E%3Cpath d='M80 86c-27-18-44-24-62-16-13 6-20 22-6 28 13 6 32-4 68-12z'/%3E%3Cpath d='M80 86v54'/%3E%3C/g%3E%3C/svg%3E"
       }
     };
 
     const reviews = [
-      { stars:5, quote:"Schnell geliefert, angeschlossen, läuft. Klang stark, Bass satt – genau was wir für die Geburtstagsparty brauchten!", name:"Svenja Peters", tag:"Privat · Wesel" },
-      { stars:5, quote:"Wir haben die Musikbox für den 30. Geburtstag meines Mannes gemietet. Bedienung super einfach, Sound richtig kräftig – die Gäste waren begeistert. Buchen wir wieder.", name:"Anna Becker", tag:"Privat · Düsseldorf" },
-      { stars:5, quote:"Für unser Kanzlei-Sommerfest hat die Box die Stimmung getragen. Besonders stark: unkomplizierter Aufbau, sofort startklar und draußen genug Reserven in der Lautstärke. Kommunikation und Abwicklung waren professionell und schnell – klare Empfehlung.", name:"Müller & Partner Steuerkanzlei", tag:"Unternehmen · Essen" },
-      { stars:5, quote:"Als mobiler DJ brauche ich verlässlichen Druck im Bass und saubere Höhen. Die Box ist robust, flott transportiert und ideal für spontane oder kleinere Gigs. Hat mich überzeugt.", name:"DJ Lukas Weber", tag:"DJ · Dortmund" },
-      { stars:5, quote:"Pre-Party vorm Festival: anstöpseln und los. Ganz andere Liga als typische Bluetooth-Lautsprecher – richtig gut!", name:"Jonas Schulte", tag:"Privat · Münster" },
-      { stars:5, quote:"Unsere Weihnachtsfeier war dank der Musikbox deutlich stimmungsvoller. Reden waren klar verständlich, danach Tanzfläche ohne Aussetzer. Unkomplizierte Übergabe, faire Konditionen – wir greifen beim nächsten Event wieder darauf zurück.", name:"Bäckerei Hagemann", tag:"Unternehmen · Bochum" },
-      { stars:4, quote:"Solide, laut, einfach. Für unseren Hof völlig ausreichend.", name:"Markus Voss", tag:"Privat · Oberhausen" },
-      { stars:5, quote:"Gartenhochzeit mit ca. 70 Leuten: klare Sprache für die Traurede, abends genug Punch zum Tanzen. Null Technik-Stress.", name:"Lisa & Marco Hoffmann", tag:"Privat · Bochum" },
-      { stars:5, quote:"In 3 Minuten aufgebaut. Viele fragten, woher die Box kommt – hat richtig Eindruck gemacht.", name:"Tim Richter", tag:"Privat · Krefeld" },
-      { stars:5, quote:"Für unser Hof-Event ideal: kräftiger, klarer Klang und kinderleichte Bedienung. Ansagen gingen nicht im Sound unter – sehr gelungenes Setup.", name:"Brauhaus am Wall", tag:"Unternehmen · Wuppertal" },
-      { stars:5, quote:"Team-Event in der Halle: Wir brauchten kompakten, zuverlässigen Sound. Die Box füllte den Raum problemlos, ohne zu dröhnen. Schnelle Abstimmung im Vorfeld, pünktliche Lieferung, top Gesamtpaket.", name:"Schneider IT-Services", tag:"Unternehmen · Köln" },
-      { stars:5, quote:"Für Afterwork-Sets und kleinere Bookings super – stabil, laut genug und ohne Schnickschnack einsatzbereit.", name:"DJ Mia Schneider", tag:"DJ · Duisburg" }
+      { stars:5, quote:"Ich habe einen frischen Wiesenstrauß bestellt und war begeistert: liebevoll gebunden, wunderschön abgestimmt und pünktlich fertig. Der Laden ist mit so viel Herz dabei!", name:"Claudia H.", tag:"Google-Rezension" },
+      { stars:5, quote:"Sehr freundliche Beratung und tolle Geschenkideen. Selbst kurzfristige Wünsche werden umgesetzt und der Strauß hält überdurchschnittlich lange.", name:"Marius K.", tag:"Google-Rezension" },
+      { stars:5, quote:"Butterblume hat unsere Hochzeit floristisch begleitet. Dekoration, Brautstrauß und Tischschmuck waren traumhaft und perfekt aufeinander abgestimmt.", name:"Svenja & Jonas", tag:"Google-Rezension" },
+      { stars:5, quote:"Ich lasse regelmäßig Blumen liefern und jedes Mal ist die Gestaltung kreativ und hochwertig. Preis-Leistung top und immer zuverlässig.", name:"Sabine L.", tag:"Google-Rezension" },
+      { stars:5, quote:"Wunderschöner Laden mit viel Liebe zum Detail. Besonders gefällt mir, dass auf Nachhaltigkeit geachtet wird – saisonale Blumen und faire Verpackungen.", name:"Daniela R.", tag:"Google-Rezension" },
+      { stars:5, quote:"Für eine Trauerfeier wurde alles sehr einfühlsam organisiert. Die Gestecke sahen würdevoll aus und wurden exakt zum Termin geliefert.", name:"Thomas B.", tag:"Google-Rezension" },
+      { stars:5, quote:"Tolle Auswahl an Pflanzen und dekorativen Geschenkideen. Man merkt sofort, dass das Team Ahnung hat und mit viel Leidenschaft berät.", name:"Marie T.", tag:"Google-Rezension" },
+      { stars:5, quote:"Ich habe einen Workshop besucht und bin begeistert, wie viel Wissen und Inspiration vermittelt wurde. Absolut empfehlenswert!", name:"Lena P.", tag:"Google-Rezension" }
     ];
 
     const LONG_QUOTE_THRESHOLD = 260;
@@ -207,6 +208,30 @@
     const isMobile = ()=> matchMedia('(max-width:640px)').matches;
     const starRow = n => "★".repeat(n) + "☆".repeat(5-n);
 
+    function createGoogleBadge(){
+      const wrap=document.createElement('div');
+      wrap.className='source';
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('viewBox','0 0 24 24');
+      svg.setAttribute('aria-hidden','true');
+      const paths=[
+        { fill:'#4285F4', d:'M21.6 12.23c0-.68-.06-1.34-.18-1.98H12v3.74h5.39c-.23 1.25-.93 2.31-1.98 3.02v2.5h3.2c1.87-1.72 2.99-4.26 2.99-7.28z' },
+        { fill:'#34A853', d:'M12 22c2.7 0 4.97-.9 6.62-2.43l-3.2-2.5c-.9.6-2.05.96-3.42.96-2.63 0-4.85-1.77-5.64-4.15H3.01v2.6C4.65 19.87 8.05 22 12 22z' },
+        { fill:'#FBBC04', d:'M6.36 13.88a6.06 6.06 0 0 1 0-3.76V7.52H3.01a10 10 0 0 0 0 8.96l3.35-2.6z' },
+        { fill:'#EA4335', d:'M12 6.04c1.47 0 2.8.51 3.85 1.52l2.88-2.88C16.96 2.85 14.7 2 12 2 8.05 2 4.65 4.13 3.01 7.52l3.35 2.6c.8-2.38 3.01-4.08 5.64-4.08z' }
+      ];
+      paths.forEach(cfg=>{
+        const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('fill',cfg.fill);
+        path.setAttribute('d',cfg.d);
+        svg.appendChild(path);
+      });
+      const label=document.createElement('span');
+      label.textContent='Google Rezension';
+      wrap.append(svg, label);
+      return wrap;
+    }
+
     /* Karten rendern */
     let cards = [];
     function createCard(r,i){
@@ -220,6 +245,11 @@
       stars.className='stars';
       stars.setAttribute('aria-label', `${r.stars} von 5 Sternen`);
       stars.textContent = starRow(r.stars);
+
+      const head=document.createElement('div');
+      head.className='head';
+      const badge=createGoogleBadge();
+      head.append(badge, stars);
 
       const quote = document.createElement('div');
       quote.className='quote';
@@ -240,7 +270,7 @@
         el.dataset.long='1';
       }
 
-      el.append(stars, quote);
+      el.append(head, quote);
 
       if(isLong){
         const moreBtn=document.createElement('button');
@@ -789,15 +819,11 @@
         const displayName=cleanText(merged.name) || 'Unternehmensprofil';
         const subtitle=cleanText(merged.subtitle) || 'Kurzbeschreibung / Kategorie';
         const locality=cleanText(merged.locality);
+        btn.textContent='Jetzt auf Google bewerten';
+        btn.setAttribute('aria-label','Jetzt auf Google bewerten');
+        btn.setAttribute('title','Jetzt auf Google bewerten');
         nameEl.textContent=displayName;
         subEl.textContent=subtitle;
-        if(locality){
-          metaEl.textContent=locality;
-          metaEl.hidden=false;
-        }else{
-          metaEl.textContent='';
-          metaEl.hidden=true;
-        }
         const imageSource=absoluteUrl(merged.image || merged.logo || merged.photo, imageBase);
         if(imageSource){
           imgEl.src=imageSource;
@@ -817,9 +843,24 @@
         const reviewDisplay=typeof reviewCount==='number'
           ? formatNumber(reviewCount)
           : cleanText(reviewCount);
-        const ratingSentence=(ratingDisplay && reviewDisplay)
-          ? `Bewertung ${ratingDisplay} aus ${reviewDisplay} Bewertungen`
-          : '';
+        let ratingSentence='';
+        if(ratingDisplay && reviewDisplay){
+          ratingSentence=`⭐️ ${ratingDisplay} · ${reviewDisplay} Google-Bewertungen`;
+        }else if(ratingDisplay){
+          ratingSentence=`⭐️ ${ratingDisplay} · Google-Bewertungen`;
+        }else if(reviewDisplay){
+          ratingSentence=`${reviewDisplay} Google-Bewertungen`;
+        }
+        const metaParts=[];
+        if(locality) metaParts.push(locality);
+        if(ratingSentence) metaParts.push(ratingSentence);
+        if(metaParts.length){
+          metaEl.textContent=metaParts.join(' · ');
+          metaEl.hidden=false;
+        }else{
+          metaEl.textContent='';
+          metaEl.hidden=true;
+        }
         if(ratingSentence){
           tooltipParts.push(ratingSentence);
         }
@@ -828,7 +869,7 @@
           displayName||'Google Unternehmensprofil',
           locality || null,
           ratingSentence || null,
-          canOpen ? 'öffnen' : 'Profilinformation'
+          canOpen ? 'Jetzt auf Google bewerten' : 'Profilinformation'
         ].filter(Boolean).join(', ');
         row.setAttribute('aria-label', ariaLabel);
         row.setAttribute('aria-disabled', canOpen ? 'false' : 'true');
