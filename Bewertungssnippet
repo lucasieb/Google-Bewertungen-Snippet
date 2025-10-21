@@ -176,7 +176,17 @@
     const BUTTERBLUME_AVATAR = "data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20160%20160%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3CradialGradient%20id%3D%27petal%27%20cx%3D%2780%27%20cy%3D%2780%27%20r%3D%2764%27%20gradientUnits%3D%27userSpaceOnUse%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23ffe697%27/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270.55%27%20stop-color%3D%27%23ffc34d%27/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23f09a1c%27/%3E%0A%20%20%20%20%3C/radialGradient%3E%0A%20%20%20%20%3CradialGradient%20id%3D%27center%27%20cx%3D%2780%27%20cy%3D%2780%27%20r%3D%2722%27%20gradientUnits%3D%27userSpaceOnUse%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23fff8d0%27/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23f7b500%27/%3E%0A%20%20%20%20%3C/radialGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%27stem%27%20x1%3D%2780%27%20y1%3D%2796%27%20x2%3D%2780%27%20y2%3D%27150%27%20gradientUnits%3D%27userSpaceOnUse%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%27%20stop-color%3D%27%235fb264%27/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%271%27%20stop-color%3D%27%232f7d32%27/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20x%3D%276%27%20y%3D%276%27%20width%3D%27148%27%20height%3D%27148%27%20rx%3D%2732%27%20fill%3D%27%23fffdf5%27%20stroke%3D%27%23f7b500%27%20stroke-width%3D%274%27/%3E%0A%20%20%3Cg%20fill%3D%27url%28%23petal%29%27%20stroke%3D%27%23f18c1c%27%20stroke-width%3D%274%27%20stroke-linejoin%3D%27round%27%3E%0A%20%20%20%20%3Cellipse%20cx%3D%2780%27%20cy%3D%2734%27%20rx%3D%2720%27%20ry%3D%2728%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%2780%27%20cy%3D%27126%27%20rx%3D%2720%27%20ry%3D%2728%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%2734%27%20cy%3D%2780%27%20rx%3D%2728%27%20ry%3D%2720%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%27126%27%20cy%3D%2780%27%20rx%3D%2728%27%20ry%3D%2720%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%2752%27%20cy%3D%2752%27%20rx%3D%2720%27%20ry%3D%2728%27%20transform%3D%27rotate%28-45%2052%2052%29%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%27108%27%20cy%3D%27108%27%20rx%3D%2720%27%20ry%3D%2728%27%20transform%3D%27rotate%28-45%20108%20108%29%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%27108%27%20cy%3D%2752%27%20rx%3D%2720%27%20ry%3D%2728%27%20transform%3D%27rotate%2845%20108%2052%29%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%2752%27%20cy%3D%27108%27%20rx%3D%2720%27%20ry%3D%2728%27%20transform%3D%27rotate%2845%2052%20108%29%27/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ccircle%20cx%3D%2780%27%20cy%3D%2780%27%20r%3D%2722%27%20fill%3D%27url%28%23center%29%27%20stroke%3D%27%23f18c1c%27%20stroke-width%3D%274%27/%3E%0A%20%20%3Cpath%20d%3D%27M80%20102c-10%2012-8%2032-24%2040%2018-2%2026-10%2028-20%202%2010%2010%2018%2028%2020-16-8-14-28-24-40z%27%20fill%3D%27url%28%23stem%29%27%20stroke%3D%27%232f7d32%27%20stroke-width%3D%274%27%20stroke-linecap%3D%27round%27/%3E%0A%3C/svg%3E";
 
     const GOOGLE_PROFILE = {
-      url: "https://share.google/VIHwvNVoxddZ96EHF",
+      url: "https://www.google.com/maps?cid=7016639030558325157",
+      shareCode: "VIHwvNVoxddZ96EHF",
+      shareUrl: "https://share.google/VIHwvNVoxddZ96EHF",
+      cid: "7016639030558325157",
+      searchQuery: "Butterblume Blumen & Geschenke",
+      aliases: [
+        "https://share.google/VIHwvNVoxddZ96EHF",
+        "https://maps.app.goo.gl/VIHwvNVoxddZ96EHF",
+        "https://maps.google.com/?cid=7016639030558325157",
+        "https://www.google.com/maps/place/?cid=7016639030558325157"
+      ],
       fallback: {
         name: "Butterblume Blumen & Geschenke",
         subtitle: "Florist · Blumen & Geschenkideen",
@@ -203,6 +213,177 @@
     let reviews = FALLBACK_REVIEWS.slice();
 
     const LONG_QUOTE_THRESHOLD = 260;
+
+    const PROXY_VARIANTS = [
+      {
+        prefix: '',
+        headers: () => ({})
+      },
+      {
+        prefix: 'https://r.jina.ai/',
+        headers: () => ({})
+      },
+      {
+        prefix: 'https://proxy.cors.sh/',
+        headers: () => ({ 'x-cors-api-key': 'temp' })
+      }
+    ];
+
+    function encodeProxyTarget(prefix, target){
+      if(!target) return '';
+      if(!prefix) return target;
+      if(target.startsWith(prefix)) return target;
+      if(prefix.includes('r.jina.ai') && /r\.jina\.ai\//i.test(target)) return target;
+      if(prefix.includes('proxy.cors.sh') && /proxy\.cors\.sh\//i.test(target)) return target;
+      return prefix + encodeURI(target);
+    }
+
+    function base62ToBigInt(value){
+      if(typeof BigInt==='undefined') return null;
+      if(!value || typeof value!=='string') return null;
+      const alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+      let result=0n;
+      for(const char of value){
+        const index=alphabet.indexOf(char);
+        if(index===-1) return null;
+        result = result*62n + BigInt(index);
+      }
+      return result;
+    }
+
+    function shareCodeToCid(value){
+      const bigInt=base62ToBigInt(value);
+      if(bigInt===null) return '';
+      const mask=(1n<<64n)-1n;
+      const cid=(bigInt & mask).toString();
+      return cid==='0' ? '' : cid;
+    }
+
+    function hexToDecimalString(hex){
+      if(typeof BigInt==='undefined' || !hex) return '';
+      try{
+        const normalized=hex.replace(/^0x/i,'');
+        if(!normalized) return '';
+        return BigInt('0x'+normalized).toString();
+      }catch(_){
+        return '';
+      }
+    }
+
+    function parseCidFromUrl(url){
+      if(!url || typeof url!=='string') return '';
+      const direct=url.match(/[?&]cid=([0-9]+)/i);
+      if(direct) return direct[1];
+      const hexMatch=url.match(/:0x([0-9a-f]+)/i);
+      if(hexMatch){
+        const decimal=hexToDecimalString(hexMatch[1]);
+        if(decimal) return decimal;
+      }
+      const pbMatch=url.match(/!1y([0-9]{10,})!/);
+      if(pbMatch) return pbMatch[1];
+      return '';
+    }
+
+    function parsePlaceIdFromUrl(url){
+      if(!url || typeof url!=='string') return '';
+      const pid=url.match(/[?&](?:placeid|place_id|q=place_id:)([A-Za-z0-9_-]+)/i);
+      if(pid) return pid[1].replace(/^place_id:/i,'');
+      const graph=url.match(/!1s(ChI[\w-]+)/);
+      if(graph) return graph[1];
+      return '';
+    }
+
+    function collectProfileSources(profile){
+      const urls=new Set();
+      const add=url=>{ if(url && typeof url==='string'){ const trimmed=url.trim(); if(trimmed) urls.add(trimmed); } };
+      if(profile.url) add(profile.url);
+      if(profile.shareUrl) add(profile.shareUrl);
+      if(Array.isArray(profile.aliases)) profile.aliases.forEach(add);
+      if(profile.shareCode){
+        add(`https://share.google/${profile.shareCode}`);
+        add(`https://maps.app.goo.gl/${profile.shareCode}`);
+      }
+      const cidCandidates=[profile.cid, shareCodeToCid(profile.shareCode), parseCidFromUrl(profile.url||'')];
+      cidCandidates.forEach(cid=>{
+        if(!cid) return;
+        add(`https://maps.google.com/?cid=${cid}`);
+        add(`https://www.google.com/maps?cid=${cid}`);
+        add(`https://www.google.com/maps/place/?cid=${cid}`);
+        add(`https://www.google.com/search?tbm=map&cid=${cid}`);
+      });
+      const placeIdCandidates=[profile.placeId, parsePlaceIdFromUrl(profile.url||'')];
+      placeIdCandidates.forEach(pid=>{
+        if(!pid) return;
+        add(`https://www.google.com/maps/place/?q=place_id:${pid}`);
+        add(`https://search.google.com/local/reviews?placeid=${pid}`);
+      });
+      if(profile.searchQuery){
+        const query=encodeURIComponent(profile.searchQuery);
+        add(`https://www.google.com/maps/search/?api=1&query=${query}`);
+        add(`https://www.google.com/search?q=${query}`);
+      }
+      return Array.from(urls);
+    }
+
+    function infoFromPlacesJson(payload){
+      if(!payload || typeof payload!=='object') return null;
+      const result = payload.result || (Array.isArray(payload.results) && payload.results.length ? payload.results[0] : null)
+        || (Array.isArray(payload.candidates) && payload.candidates.length ? payload.candidates[0] : null);
+      if(!result || typeof result!=='object') return null;
+      const info={};
+      info.name = cleanText(result.name);
+      info.subtitle = cleanText(
+        (result.editorial_summary && result.editorial_summary.overview)
+        || result.editorialSummary
+        || result.secondaryText
+      );
+      if(!info.subtitle && Array.isArray(result.types) && result.types.length){
+        const typeLabel=result.types
+          .map(type=>String(type||'').replace(/_/g,' ').trim())
+          .filter(Boolean)
+          .slice(0,3)
+          .join(' · ');
+        if(typeLabel) info.subtitle=typeLabel;
+      }
+      info.locality = cleanText(result.formatted_address || result.vicinity || result.address || result.plus_code && result.plus_code.compound_code);
+      const rating = pickRating(result.rating, result.reviewRating, result.overallRating, result.starRating);
+      if(rating!==null) info.rating=rating;
+      const countCandidate = normalizeCount(result.user_ratings_total || result.userRatingCount || result.reviews_total || result.reviews_count || result.ratingCount);
+      if(countCandidate!==null) info.reviewCount=countCandidate;
+      const imageCandidate = cleanText(result.profile_photo_url || result.icon || result.icon_url || result.icon_mask_base_uri || result.logo_url);
+      if(imageCandidate) info.image=imageCandidate;
+      if(result.photos && result.photos.length){
+        const first=result.photos[0];
+        const direct=cleanText(first.photo_url || first.url || first.image_url || first.photoUri);
+        if(direct) info.image=direct;
+      }
+      const placeId=result.place_id || result.placeId || payload.place_id || payload.placeId;
+      if(placeId) info.placeId=placeId;
+      const cid=parseCidFromUrl(result.url||'') || parseCidFromUrl(result.maps_url||'') || result.cid || result.googleCid || payload.cid;
+      if(cid) info.cid=String(cid);
+      const shareUrl=result.url || result.maps_url || payload.url;
+      if(shareUrl) info.url=shareUrl;
+      if(result.editorial_summary && result.editorial_summary.subject){
+        const subject=cleanText(result.editorial_summary.subject);
+        if(subject && !info.subtitle) info.subtitle=subject;
+      }
+      if(result.reviews){
+        const transformed=result.reviews.map(entry=>{
+          let dateLabel=entry.relative_time_description;
+          if(!dateLabel && typeof entry.time==='number'){ try{ dateLabel=new Date(entry.time*1000).toISOString().slice(0,10); }catch(_){ dateLabel=''; } }
+          return {
+            id: entry.review_id || entry.time || entry.author_url || entry.author_name,
+            author: entry.author_name || entry.author_url || entry.profile_name,
+            rating: entry.rating,
+            text: entry.text || entry.original_text || entry.comment,
+            date: dateLabel || entry.time,
+            url: entry.author_url || entry.profile_url
+          };
+        });
+        mergeReviews(info, transformed);
+      }
+      return info;
+    }
 
     /* Elemente */
     const root = document.getElementById('mm-reviews');
@@ -876,7 +1057,7 @@
     function applyInfo(target, source){
       if(!source) return target;
       const out={...target};
-      ['name','subtitle','locality','image','rating','reviewCount'].forEach(key=>{
+      ['name','subtitle','locality','image','rating','reviewCount','cid','placeId','url','shareUrl'].forEach(key=>{
         if(out[key]===undefined || out[key]===null || out[key]===''){
           const value=source[key];
           if(value!==undefined && value!==null && value!==''){
@@ -910,6 +1091,17 @@
       if(typeof value==='object'){
         if(typeof value.name==='string' && value.name.trim() && !info.name){ info.name=value.name.trim(); }
         if(typeof value.title==='string' && value.title.trim() && !info.name){ info.name=value.title.trim(); }
+        if(!info.url && typeof value.url==='string' && value.url.trim()){ info.url=value.url.trim(); }
+        if(!info.shareUrl && typeof value.sharingUrl==='string' && value.sharingUrl.trim()){ info.shareUrl=value.sharingUrl.trim(); }
+        if(!info.cid){
+          const cidCandidate = value.cid || value.googleCid || value.clusterId || value.cid64 || value.placeCid || parseCidFromUrl(value.url||'') || parseCidFromUrl(value.sharingUrl||'');
+          if(typeof cidCandidate==='string' && cidCandidate.trim()){ info.cid=cidCandidate.trim(); }
+          else if(typeof cidCandidate==='number' && cidCandidate>0){ info.cid=String(cidCandidate); }
+        }
+        if(!info.placeId){
+          const pidCandidate = value.placeId || value.place_id || value.locationId || value.primaryPlaceId || parsePlaceIdFromUrl(value.url||'') || parsePlaceIdFromUrl(value.sharingUrl||'');
+          if(typeof pidCandidate==='string' && pidCandidate.trim()){ info.placeId=pidCandidate.trim(); }
+        }
         const subtitleCandidate=value.description || value.subtitle || value.tagline || value.category || value.primaryText || value.primaryCategory || value.headline;
         if(typeof subtitleCandidate==='string' && subtitleCandidate.trim() && !info.subtitle){ info.subtitle=subtitleCandidate.trim(); }
         if(value.displayName && typeof value.displayName.text==='string' && value.displayName.text.trim() && !info.name){ info.name=value.displayName.text.trim(); }
@@ -966,6 +1158,16 @@
         if(!text) return;
         if(!info.image && /https?:\/\/.+googleusercontent\.com\//i.test(text)){ info.image=text; }
         if(!info.subtitle && text.length>20 && text.length<240 && /[·•,]/.test(text)){ info.subtitle=cleanText(text); }
+        if(!info.cid){
+          const cidCandidate=parseCidFromUrl(text);
+          if(cidCandidate) info.cid=cidCandidate;
+          else if(!info.cid && /^[0-9]{10,}$/.test(text)){ info.cid=text; }
+        }
+        if(!info.placeId){
+          const pidCandidate=parsePlaceIdFromUrl(text);
+          if(pidCandidate) info.placeId=pidCandidate;
+          else if(/^ChI[\w-]+$/.test(text)){ info.placeId=text; }
+        }
         return;
       }
       if(typeof value==='number'){
@@ -1031,35 +1233,76 @@
       return merged;
     }
 
-    async function resolveProfile(url){
-      if(!url) return {};
+    async function resolveProfile(config){
+      if(!config) return {};
+      const sources=collectProfileSources(config);
+      if(!sources.length) return {};
       const attempts=[];
-      const cleaned=url.trim();
-      if(cleaned) attempts.push(cleaned);
-      if(/^https?:\/\//i.test(cleaned) && !/^https?:\/\/r\.jina\.ai\//i.test(cleaned)){
-        const proxied=`https://r.jina.ai/${cleaned}`;
-        if(!attempts.includes(proxied)) attempts.push(proxied);
-      }
+      sources.forEach(source=>{
+        PROXY_VARIANTS.forEach(proxy=>{
+          const target=encodeProxyTarget(proxy.prefix, source);
+          if(!target) return;
+          attempts.push({ url:target, original:source, proxy });
+        });
+      });
+      const seen=new Set();
+      const queue=attempts.filter(item=>{
+        if(seen.has(item.url)) return false;
+        seen.add(item.url);
+        return true;
+      });
       let bestInfo=null;
       let bestScore=-1;
       let lastError=null;
-      for(const target of attempts){
+      const baseHints={
+        cid: config.cid || parseCidFromUrl(config.url||''),
+        placeId: config.placeId || parsePlaceIdFromUrl(config.url||''),
+        shareUrl: config.shareUrl || (config.shareCode ? `https://share.google/${config.shareCode}` : ''),
+        url: config.url
+      };
+      for(const attempt of queue){
         try{
-          const res=await fetch(target,{mode:'cors'});
+          const init={ mode:'cors', credentials:'omit', cache:'no-store' };
+          const headerBag=attempt.proxy.headers();
+          if(headerBag && Object.keys(headerBag).length){ init.headers=headerBag; }
+          const res=await fetch(attempt.url, init);
           if(!res.ok) throw new Error(`Request failed (${res.status})`);
           const text=await res.text();
-          const doc=new DOMParser().parseFromString(text,'text/html');
-          const info=enrichProfileInfo(extractProfileFromDocument(doc) || {}, text);
+          const contentType=(res.headers && res.headers.get && res.headers.get('content-type')) || '';
+          let info={};
+          let parsed=null;
+          const trimmed=text.trim();
+          if(contentType.includes('application/json') || trimmed.startsWith('{') || trimmed.startsWith('[')){
+            try{ parsed=JSON.parse(trimmed); }
+            catch(_){ parsed=null; }
+          }
+          if(parsed){
+            const jsonInfo=infoFromPlacesJson(parsed);
+            if(jsonInfo){ info=applyInfo(info, jsonInfo); }
+          }
+          if(!Object.keys(info).length){
+            const doc=new DOMParser().parseFromString(text,'text/html');
+            info=enrichProfileInfo(extractProfileFromDocument(doc) || {}, text);
+          }else if(parsed){
+            const htmlFromJson=parsed && parsed.html;
+            if(typeof htmlFromJson==='string' && htmlFromJson.trim()){
+              const doc=new DOMParser().parseFromString(htmlFromJson,'text/html');
+              info=applyInfo(info, enrichProfileInfo(extractProfileFromDocument(doc)||{}, htmlFromJson));
+            }
+          }
+          if(parsed && parsed.result && parsed.result.reviews_summary && Array.isArray(parsed.result.reviews_summary.reviews)){
+            mergeReviews(info, parsed.result.reviews_summary.reviews);
+          }
+          info=applyInfo(info, baseHints);
           if(Array.isArray(info.reviews) && info.reviews.length){
             info.reviews=dedupeReviews(info.reviews).slice(0, MAX_REVIEWS);
             if(!info.reviewCount){ info.reviewCount=info.reviews.length; }
           }
-          const resolvedUrl=(res.url && res.url.startsWith('https://r.jina.ai/')) ? cleaned : (res.url||cleaned);
-          const hasData=Object.keys(info).length>0;
+          const resolvedUrl=(res.url && res.url.startsWith('https://r.jina.ai/')) ? attempt.original : (res.url||attempt.original);
           info._baseUrl=resolvedUrl;
-          const coreKeys=['name','subtitle','locality','image'];
-          const score=coreKeys.reduce((acc,key)=> acc + (info[key]?1:0), 0);
-          if(hasData && (score>=3 || target.startsWith('https://r.jina.ai/'))){
+          const coreKeys=['name','subtitle','locality','image','rating','reviewCount'];
+          const score=coreKeys.reduce((acc,key)=> acc + (info && info[key] ? 1 : 0), 0);
+          if(score>=4 && Array.isArray(info.reviews) && info.reviews.length>=3){
             return info;
           }
           if(score>bestScore){ bestInfo=info; bestScore=score; }
@@ -1087,11 +1330,14 @@
       const imgEl=root.querySelector('#mmGImg');
       const fallback={...(GOOGLE_PROFILE.fallback||{})};
       const profileUrl=GOOGLE_PROFILE.url;
+      let currentProfileUrl=profileUrl;
 
       const apply=data=>{
         const merged=applyInfo(data ? {...data} : {}, fallback);
         const imageBase=(data && data._baseUrl) || profileUrl;
-        const canOpen=profileUrl && /^https?:\/\//i.test(profileUrl);
+        const linkCandidate=absoluteUrl(merged.url || merged.shareUrl || profileUrl, imageBase || profileUrl);
+        currentProfileUrl = linkCandidate && /^https?:\/\//i.test(linkCandidate) ? linkCandidate : profileUrl;
+        const canOpen=currentProfileUrl && /^https?:\/\//i.test(currentProfileUrl);
         const reviewList=Array.isArray(data && data.reviews) && data.reviews.length ? data.reviews : merged.reviews;
         if(!merged.reviewCount && Array.isArray(reviewList) && reviewList.length){
           merged.reviewCount=reviewList.length;
@@ -1158,33 +1404,39 @@
         row.setAttribute('tabindex', canOpen ? '0' : '-1');
         btn.setAttribute('aria-disabled', canOpen ? 'false' : 'true');
         btn.setAttribute('tabindex', canOpen ? '0' : '-1');
+        if(canOpen){
+          row.classList.add('enabled');
+          btn.style.opacity='1';
+          btn.style.pointerEvents='auto';
+        }else{
+          row.classList.remove('enabled');
+          btn.style.opacity='0.6';
+          btn.style.pointerEvents='none';
+        }
         return merged;
       };
 
       apply({});
 
-      if(profileUrl && /^https?:\/\//i.test(profileUrl)){
-        row.classList.add('enabled');
-        btn.style.opacity='1';
-        btn.style.pointerEvents='auto';
-        btn.setAttribute('aria-disabled','false');
-        const open=()=>window.open(profileUrl,'_blank','noopener');
-        row.addEventListener('click',open);
-        row.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); }});
-        btn.addEventListener('click',e=>{ e.stopPropagation(); open(); });
+      const open=()=>{
+        const target=currentProfileUrl && /^https?:\/\//i.test(currentProfileUrl) ? currentProfileUrl : profileUrl;
+        if(target){ window.open(target,'_blank','noopener'); }
+      };
+      row.addEventListener('click',open);
+      row.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); }});
+      btn.addEventListener('click',e=>{ e.stopPropagation(); open(); });
 
-        if(window.fetch && window.DOMParser){
-          resolveProfile(profileUrl).then(data=>{
-            if(data && Object.keys(data).length){
-              const merged=apply(data);
-              let replaced=false;
-              if(data.reviews){ replaced=setReviewsFromRaw(data.reviews,{resetIndex:true}); }
-              if(!replaced && merged && merged.reviews){
-                setReviewsFromRaw(merged.reviews,{resetIndex:true});
-              }
+      if(window.fetch && window.DOMParser){
+        resolveProfile(GOOGLE_PROFILE).then(data=>{
+          if(data && Object.keys(data).length){
+            const merged=apply(data);
+            let replaced=false;
+            if(data.reviews){ replaced=setReviewsFromRaw(data.reviews,{resetIndex:true}); }
+            if(!replaced && merged && merged.reviews){
+              setReviewsFromRaw(merged.reviews,{resetIndex:true});
             }
-          });
-        }
+          }
+        });
       }
     })();
 
