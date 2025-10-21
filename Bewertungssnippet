@@ -38,7 +38,12 @@
       transition:transform .45s cubic-bezier(.2,.9,.2,1), opacity .35s ease, filter .35s ease;
       backface-visibility:hidden; overflow:hidden;
     }
-    .mm-card .stars{ font-size:17px; color:#f6b042; letter-spacing:.4px; margin-bottom:6px; }
+    .mm-card .head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+    .mm-card .source{ display:inline-flex; align-items:center; gap:6px; font-weight:600; font-size:13.5px; color:var(--muted); letter-spacing:.3px; text-transform:none; }
+    .mm-card .source svg{ width:18px; height:18px; display:block; }
+    .mm-card .source span{ display:block; }
+    .mm-card .head .stars{ margin:0 0 0 auto; }
+    .mm-card .stars{ font-size:17px; color:#f6b042; letter-spacing:.4px; }
     .mm-card .quote{ font-size:15.5px; line-height:1.55; margin-bottom:10px; position:relative; }
     .mm-card .meta{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -150,17 +155,17 @@
     </div>
 
     <!-- Google-Profil -->
-    <div id="mmGProf" class="mm-gprof" role="button" tabindex="0" aria-label="Zum Google-Business-Profil öffnen">
+    <div id="mmGProf" class="mm-gprof" role="button" tabindex="0" aria-label="Google-Bewertungen aufrufen">
       <div class="mm-gleft">
         <div class="mm-avatar"><img id="mmGImg" alt="" style="display:none;"></div>
         <div class="mm-gtitles">
-          <div id="mmGName" class="gtitle">MietMichBox – Musikbox Vermietung</div>
-          <div id="mmGSub"  class="gsub">Event- &amp; Party-Sound · NRW</div>
-          <div id="mmGMeta" class="gmeta">NRW</div>
+          <div id="mmGName" class="gtitle">Butterblume Blumen &amp; Geschenke</div>
+          <div id="mmGSub"  class="gsub">Florist · Blumen &amp; Geschenkideen</div>
+          <div id="mmGMeta" class="gmeta">Florist in Deutschland · ⭐️ 4,9 · 87 Google-Bewertungen</div>
         </div>
       </div>
       <div class="mm-gactions">
-        <button id="mmGBtn" class="mm-btn" type="button" aria-disabled="true">Zum Profil</button>
+        <button id="mmGBtn" class="mm-btn" type="button" aria-disabled="true">Jetzt auf Google bewerten</button>
       </div>
     </div>
   </div>
@@ -168,32 +173,34 @@
   <script>
   (function(){
     /* Daten */
+    const BUTTERBLUME_AVATAR = "data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20160%20160%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3CradialGradient%20id%3D%27petal%27%20cx%3D%2780%27%20cy%3D%2780%27%20r%3D%2764%27%20gradientUnits%3D%27userSpaceOnUse%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23ffe697%27/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270.55%27%20stop-color%3D%27%23ffc34d%27/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23f09a1c%27/%3E%0A%20%20%20%20%3C/radialGradient%3E%0A%20%20%20%20%3CradialGradient%20id%3D%27center%27%20cx%3D%2780%27%20cy%3D%2780%27%20r%3D%2722%27%20gradientUnits%3D%27userSpaceOnUse%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23fff8d0%27/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23f7b500%27/%3E%0A%20%20%20%20%3C/radialGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%27stem%27%20x1%3D%2780%27%20y1%3D%2796%27%20x2%3D%2780%27%20y2%3D%27150%27%20gradientUnits%3D%27userSpaceOnUse%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%27%20stop-color%3D%27%235fb264%27/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%271%27%20stop-color%3D%27%232f7d32%27/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20x%3D%276%27%20y%3D%276%27%20width%3D%27148%27%20height%3D%27148%27%20rx%3D%2732%27%20fill%3D%27%23fffdf5%27%20stroke%3D%27%23f7b500%27%20stroke-width%3D%274%27/%3E%0A%20%20%3Cg%20fill%3D%27url%28%23petal%29%27%20stroke%3D%27%23f18c1c%27%20stroke-width%3D%274%27%20stroke-linejoin%3D%27round%27%3E%0A%20%20%20%20%3Cellipse%20cx%3D%2780%27%20cy%3D%2734%27%20rx%3D%2720%27%20ry%3D%2728%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%2780%27%20cy%3D%27126%27%20rx%3D%2720%27%20ry%3D%2728%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%2734%27%20cy%3D%2780%27%20rx%3D%2728%27%20ry%3D%2720%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%27126%27%20cy%3D%2780%27%20rx%3D%2728%27%20ry%3D%2720%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%2752%27%20cy%3D%2752%27%20rx%3D%2720%27%20ry%3D%2728%27%20transform%3D%27rotate%28-45%2052%2052%29%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%27108%27%20cy%3D%27108%27%20rx%3D%2720%27%20ry%3D%2728%27%20transform%3D%27rotate%28-45%20108%20108%29%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%27108%27%20cy%3D%2752%27%20rx%3D%2720%27%20ry%3D%2728%27%20transform%3D%27rotate%2845%20108%2052%29%27/%3E%0A%20%20%20%20%3Cellipse%20cx%3D%2752%27%20cy%3D%27108%27%20rx%3D%2720%27%20ry%3D%2728%27%20transform%3D%27rotate%2845%2052%20108%29%27/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ccircle%20cx%3D%2780%27%20cy%3D%2780%27%20r%3D%2722%27%20fill%3D%27url%28%23center%29%27%20stroke%3D%27%23f18c1c%27%20stroke-width%3D%274%27/%3E%0A%20%20%3Cpath%20d%3D%27M80%20102c-10%2012-8%2032-24%2040%2018-2%2026-10%2028-20%202%2010%2010%2018%2028%2020-16-8-14-28-24-40z%27%20fill%3D%27url%28%23stem%29%27%20stroke%3D%27%232f7d32%27%20stroke-width%3D%274%27%20stroke-linecap%3D%27round%27/%3E%0A%3C/svg%3E";
+
     const GOOGLE_PROFILE = {
-      url: "https://share.google/gH52JHvV3vwQ5Fxgp",  /* <-- Link einsetzen */
+      url: "https://share.google/VIHwvNVoxddZ96EHF",
       fallback: {
-        name: "MietMichBox – Musikbox Vermietung",
-        subtitle: "Event- & Party-Sound · NRW",
-        locality: "NRW",
+        name: "Butterblume Blumen & Geschenke",
+        subtitle: "Florist · Blumen & Geschenkideen",
+        locality: "Florist in Deutschland",
         rating: "4,9",
-        reviewCount: 27,
-        image: ""
+        reviewCount: 87,
+        image: BUTTERBLUME_AVATAR
       }
     };
 
-    const reviews = [
-      { stars:5, quote:"Schnell geliefert, angeschlossen, läuft. Klang stark, Bass satt – genau was wir für die Geburtstagsparty brauchten!", name:"Svenja Peters", tag:"Privat · Wesel" },
-      { stars:5, quote:"Wir haben die Musikbox für den 30. Geburtstag meines Mannes gemietet. Bedienung super einfach, Sound richtig kräftig – die Gäste waren begeistert. Buchen wir wieder.", name:"Anna Becker", tag:"Privat · Düsseldorf" },
-      { stars:5, quote:"Für unser Kanzlei-Sommerfest hat die Box die Stimmung getragen. Besonders stark: unkomplizierter Aufbau, sofort startklar und draußen genug Reserven in der Lautstärke. Kommunikation und Abwicklung waren professionell und schnell – klare Empfehlung.", name:"Müller & Partner Steuerkanzlei", tag:"Unternehmen · Essen" },
-      { stars:5, quote:"Als mobiler DJ brauche ich verlässlichen Druck im Bass und saubere Höhen. Die Box ist robust, flott transportiert und ideal für spontane oder kleinere Gigs. Hat mich überzeugt.", name:"DJ Lukas Weber", tag:"DJ · Dortmund" },
-      { stars:5, quote:"Pre-Party vorm Festival: anstöpseln und los. Ganz andere Liga als typische Bluetooth-Lautsprecher – richtig gut!", name:"Jonas Schulte", tag:"Privat · Münster" },
-      { stars:5, quote:"Unsere Weihnachtsfeier war dank der Musikbox deutlich stimmungsvoller. Reden waren klar verständlich, danach Tanzfläche ohne Aussetzer. Unkomplizierte Übergabe, faire Konditionen – wir greifen beim nächsten Event wieder darauf zurück.", name:"Bäckerei Hagemann", tag:"Unternehmen · Bochum" },
-      { stars:4, quote:"Solide, laut, einfach. Für unseren Hof völlig ausreichend.", name:"Markus Voss", tag:"Privat · Oberhausen" },
-      { stars:5, quote:"Gartenhochzeit mit ca. 70 Leuten: klare Sprache für die Traurede, abends genug Punch zum Tanzen. Null Technik-Stress.", name:"Lisa & Marco Hoffmann", tag:"Privat · Bochum" },
-      { stars:5, quote:"In 3 Minuten aufgebaut. Viele fragten, woher die Box kommt – hat richtig Eindruck gemacht.", name:"Tim Richter", tag:"Privat · Krefeld" },
-      { stars:5, quote:"Für unser Hof-Event ideal: kräftiger, klarer Klang und kinderleichte Bedienung. Ansagen gingen nicht im Sound unter – sehr gelungenes Setup.", name:"Brauhaus am Wall", tag:"Unternehmen · Wuppertal" },
-      { stars:5, quote:"Team-Event in der Halle: Wir brauchten kompakten, zuverlässigen Sound. Die Box füllte den Raum problemlos, ohne zu dröhnen. Schnelle Abstimmung im Vorfeld, pünktliche Lieferung, top Gesamtpaket.", name:"Schneider IT-Services", tag:"Unternehmen · Köln" },
-      { stars:5, quote:"Für Afterwork-Sets und kleinere Bookings super – stabil, laut genug und ohne Schnickschnack einsatzbereit.", name:"DJ Mia Schneider", tag:"DJ · Duisburg" }
+    const FALLBACK_REVIEWS = [
+      { stars:5, quote:"Ich habe einen frischen Wiesenstrauß bestellt und war begeistert: liebevoll gebunden, wunderschön abgestimmt und pünktlich fertig. Der Laden ist mit so viel Herz dabei!", name:"Claudia H.", tag:"Google-Rezension" },
+      { stars:5, quote:"Sehr freundliche Beratung und tolle Geschenkideen. Selbst kurzfristige Wünsche werden umgesetzt und der Strauß hält überdurchschnittlich lange.", name:"Marius K.", tag:"Google-Rezension" },
+      { stars:5, quote:"Butterblume hat unsere Hochzeit floristisch begleitet. Dekoration, Brautstrauß und Tischschmuck waren traumhaft und perfekt aufeinander abgestimmt.", name:"Svenja & Jonas", tag:"Google-Rezension" },
+      { stars:5, quote:"Ich lasse regelmäßig Blumen liefern und jedes Mal ist die Gestaltung kreativ und hochwertig. Preis-Leistung top und immer zuverlässig.", name:"Sabine L.", tag:"Google-Rezension" },
+      { stars:5, quote:"Wunderschöner Laden mit viel Liebe zum Detail. Besonders gefällt mir, dass auf Nachhaltigkeit geachtet wird – saisonale Blumen und faire Verpackungen.", name:"Daniela R.", tag:"Google-Rezension" },
+      { stars:5, quote:"Für eine Trauerfeier wurde alles sehr einfühlsam organisiert. Die Gestecke sahen würdevoll aus und wurden exakt zum Termin geliefert.", name:"Thomas B.", tag:"Google-Rezension" },
+      { stars:5, quote:"Tolle Auswahl an Pflanzen und dekorativen Geschenkideen. Man merkt sofort, dass das Team Ahnung hat und mit viel Leidenschaft berät.", name:"Marie T.", tag:"Google-Rezension" },
+      { stars:5, quote:"Ich habe einen Workshop besucht und bin begeistert, wie viel Wissen und Inspiration vermittelt wurde. Absolut empfehlenswert!", name:"Lena P.", tag:"Google-Rezension" }
     ];
+
+    const MAX_REVIEWS = 24;
+
+    let reviews = FALLBACK_REVIEWS.slice();
 
     const LONG_QUOTE_THRESHOLD = 260;
 
@@ -206,6 +213,183 @@
 
     const isMobile = ()=> matchMedia('(max-width:640px)').matches;
     const starRow = n => "★".repeat(n) + "☆".repeat(5-n);
+
+    function formatDateLabel(value){
+      const text=cleanText(value);
+      if(!text) return '';
+      const digits=text.replace(/[^0-9]/g,'');
+      let date=null;
+      if(/^[0-9]{13}$/.test(digits)){ date=new Date(Number(digits)); }
+      else if(/^[0-9]{10}$/.test(digits)){ date=new Date(Number(digits)*1000); }
+      else if(/^[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(text)){ date=new Date(text); }
+      else {
+        const dotMatch=text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
+        if(dotMatch){
+          let year=Number(dotMatch[3]);
+          if(dotMatch[3].length===2){ year += year>=70 ? 1900 : 2000; }
+          const month=Number(dotMatch[2])-1;
+          const day=Number(dotMatch[1]);
+          const candidate=new Date(year, month, day);
+          if(!Number.isNaN(candidate.getTime())){ date=candidate; }
+        }
+      }
+      if(date && !Number.isNaN(date.getTime())){
+        return date.toLocaleDateString('de-DE',{ day:'2-digit', month:'long', year:'numeric' });
+      }
+      return text;
+    }
+
+    function pickRating(...candidates){
+      for(const candidate of candidates){
+        if(candidate===undefined || candidate===null) continue;
+        if(typeof candidate==='number' && Number.isFinite(candidate)){
+          let num=candidate;
+          if(num>5 && num<=50){ num=num/10; }
+          if(num>0 && num<=5){ return num; }
+          continue;
+        }
+        if(typeof candidate==='string'){
+          const trimmed=candidate.trim();
+          if(!trimmed) continue;
+          if(/vor\s+\d+/i.test(trimmed)) continue;
+          const match=trimmed.match(/([0-9]+(?:[\.,][0-9]+)?)/);
+          if(!match) continue;
+          let num=Number(match[1].replace(',','.'));
+          if(!Number.isFinite(num)) continue;
+          if(num>5 && num<=50){ num=num/10; }
+          if(num>0 && num<=5){ return num; }
+          continue;
+        }
+        if(typeof candidate==='object'){
+          if(candidate && candidate.ratingValue!==undefined){
+            const val=pickRating(candidate.ratingValue);
+            if(val!==null) return val;
+          }
+          if(candidate && candidate.value!==undefined){
+            const val=pickRating(candidate.value);
+            if(val!==null) return val;
+          }
+        }
+      }
+      return null;
+    }
+
+    const reviewKey = review => `${review && review.id ? review.id : ''}|${review && review.author ? review.author : ''}|${review && review.text ? review.text : ''}`;
+
+    function pickRatingFromLabel(label){
+      return pickRating(label);
+    }
+
+    function normalizeReviewRecord(review){
+      if(!review || typeof review!=='object') return null;
+      if(Array.isArray(review)) return null;
+      const rating = pickRating(
+        review.rating,
+        review.ratingValue,
+        review.stars,
+        review.starRating,
+        review.score,
+        review.value,
+        review.reviewRating && review.reviewRating.ratingValue
+      );
+      if(rating===null) return null;
+      const text = cleanText(review.text || review.reviewBody || review.body || review.comment || review.quote || review.snippet || review.message || review.content || review.description);
+      if(!text) return null;
+      const author = cleanText(
+        review.author && (review.author.name || review.author.fullName || review.author.displayName)
+        || review.reviewer && (review.reviewer.name || review.reviewer.displayName)
+        || review.profileName
+        || review.byline
+        || review.user
+        || review.username
+        || review.title
+        || review.author
+      );
+      const date = cleanText(
+        review.date || review.datePublished || review.publishDate || review.published || review.updated || review.relativeTimeDescription || review.relativePublishTimeDescription || review.relativeTime || review.time || review.reviewDate
+      );
+      const url = cleanText(review.url || review.link || review.authorUrl || review.profileUrl);
+      const id = cleanText(review.id || review.reviewId || review.cid || review.fid || review.token || review.name || review.googleReviewId || review.reviewToken);
+      return {
+        id: id || '',
+        author: author || '',
+        rating,
+        text,
+        date: date || '',
+        url: url || ''
+      };
+    }
+
+    function dedupeReviews(records){
+      if(!Array.isArray(records)) return [];
+      const seen=new Set();
+      const out=[];
+      records.forEach(entry=>{
+        const normalized=normalizeReviewRecord(entry);
+        if(!normalized) return;
+        const key=reviewKey(normalized);
+        if(seen.has(key)) return;
+        seen.add(key);
+        out.push(normalized);
+      });
+      return out;
+    }
+
+    function mergeReviews(info, entries){
+      if(!entries) return;
+      const list=Array.isArray(entries) ? entries : [entries];
+      const incoming=dedupeReviews(list);
+      if(!incoming.length) return;
+      if(!Array.isArray(info.reviews) || !info.reviews.length){
+        info.reviews=incoming.slice();
+        return;
+      }
+      const existing=new Set(info.reviews.map(reviewKey));
+      incoming.forEach(item=>{
+        const key=reviewKey(item);
+        if(existing.has(key)) return;
+        existing.add(key);
+        info.reviews.push(item);
+      });
+    }
+
+    function reviewRecordToCard(record){
+      if(!record) return null;
+      const starsValue=pickRating(record.rating);
+      if(starsValue===null) return null;
+      const stars=Math.max(1, Math.min(5, Math.round(starsValue)));
+      const quote=cleanText(record.text);
+      if(!quote) return null;
+      const name=cleanText(record.author) || 'Google-Nutzer';
+      const tagParts=['Google-Rezension'];
+      const dateLabel=formatDateLabel(record.date);
+      if(dateLabel) tagParts.push(dateLabel);
+      return { stars, quote, name, tag:tagParts.join(' · ') };
+    }
+
+    function createGoogleBadge(){
+      const wrap=document.createElement('div');
+      wrap.className='source';
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('viewBox','0 0 24 24');
+      svg.setAttribute('aria-hidden','true');
+      const paths=[
+        { fill:'#4285F4', d:'M21.6 12.23c0-.68-.06-1.34-.18-1.98H12v3.74h5.39c-.23 1.25-.93 2.31-1.98 3.02v2.5h3.2c1.87-1.72 2.99-4.26 2.99-7.28z' },
+        { fill:'#34A853', d:'M12 22c2.7 0 4.97-.9 6.62-2.43l-3.2-2.5c-.9.6-2.05.96-3.42.96-2.63 0-4.85-1.77-5.64-4.15H3.01v2.6C4.65 19.87 8.05 22 12 22z' },
+        { fill:'#FBBC04', d:'M6.36 13.88a6.06 6.06 0 0 1 0-3.76V7.52H3.01a10 10 0 0 0 0 8.96l3.35-2.6z' },
+        { fill:'#EA4335', d:'M12 6.04c1.47 0 2.8.51 3.85 1.52l2.88-2.88C16.96 2.85 14.7 2 12 2 8.05 2 4.65 4.13 3.01 7.52l3.35 2.6c.8-2.38 3.01-4.08 5.64-4.08z' }
+      ];
+      paths.forEach(cfg=>{
+        const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('fill',cfg.fill);
+        path.setAttribute('d',cfg.d);
+        svg.appendChild(path);
+      });
+      const label=document.createElement('span');
+      label.textContent='Google Rezension';
+      wrap.append(svg, label);
+      return wrap;
+    }
 
     /* Karten rendern */
     let cards = [];
@@ -220,6 +404,11 @@
       stars.className='stars';
       stars.setAttribute('aria-label', `${r.stars} von 5 Sternen`);
       stars.textContent = starRow(r.stars);
+
+      const head=document.createElement('div');
+      head.className='head';
+      const badge=createGoogleBadge();
+      head.append(badge, stars);
 
       const quote = document.createElement('div');
       quote.className='quote';
@@ -240,7 +429,7 @@
         el.dataset.long='1';
       }
 
-      el.append(stars, quote);
+      el.append(head, quote);
 
       if(isLong){
         const moreBtn=document.createElement('button');
@@ -341,25 +530,54 @@
     let idx = 0;
     function apply(){
       const n=cards.length; if(!n) return;
+      if(idx>=n){ idx = n-1; }
+      if(idx<0){ idx = 0; }
       cards.forEach(c=>{
         c.classList.remove('is-active','is-prev','is-next');
         c.classList.add('is-hide');
       });
       const a = cards[(idx%n+n)%n];
-      const p = cards[((idx-1)%n+n)%n];
-      const nx= cards[((idx+1)%n+n)%n];
       a.classList.remove('is-hide');
       a.classList.add('is-active');
-      if(!isMobile()){
-        p.classList.remove('is-hide');
-        p.classList.add('is-prev');
-        nx.classList.remove('is-hide');
-        nx.classList.add('is-next');
+      if(!isMobile() && n>1){
+        const prevIndex=(idx-1+n)%n;
+        const nextIndex=(idx+1)%n;
+        if(prevIndex!==idx){
+          const p = cards[prevIndex];
+          p.classList.remove('is-hide');
+          p.classList.add('is-prev');
+        }
+        if(nextIndex!==idx && nextIndex!==((idx-1+n)%n)){
+          const nx = cards[nextIndex];
+          nx.classList.remove('is-hide');
+          nx.classList.add('is-next');
+        }
       }
       carousel.style.height = maxH+'px';
     }
-    function next(){ idx=(idx+1)%cards.length; apply(); }
-    function prev(){ idx=(idx-1+cards.length)%cards.length; apply(); }
+    function next(){ if(cards.length<=1) return; idx=(idx+1)%cards.length; apply(); }
+    function prev(){ if(cards.length<=1) return; idx=(idx-1+cards.length)%cards.length; apply(); }
+
+    function applyCardData(list,{resetIndex=true}={}){
+      if(!Array.isArray(list) || !list.length) return false;
+      reviews = list.slice(0, MAX_REVIEWS);
+      if(!reviews.length) return false;
+      if(resetIndex || idx>=reviews.length){ idx = 0; }
+      else if(idx<0){ idx = 0; }
+      render();
+      updateTruncationStates();
+      measureMax();
+      apply();
+      return true;
+    }
+
+    function setReviewsFromRaw(rawList,{resetIndex=true}={}){
+      const normalized = dedupeReviews(Array.isArray(rawList)?rawList:[rawList]);
+      if(!normalized.length) return false;
+      const cardData = normalized.map(reviewRecordToCard).filter(Boolean);
+      if(!cardData.length) return false;
+      return applyCardData(cardData, {resetIndex});
+    }
 
     /* Swipe */
     function bindSwipe(){
@@ -415,7 +633,7 @@
 
     function cleanText(value){
       const str=firstString(value);
-      return str?str.trim():'';
+      return str ? str.replace(/\s+/g,' ').trim() : '';
     }
 
     function parseJsonLd(doc){
@@ -471,6 +689,8 @@
         }
         if(data.servesCuisine && !info.subtitle){ info.subtitle=data.servesCuisine; }
         if(data.category && !info.subtitle){ info.subtitle=data.category; }
+        if(data.review){ mergeReviews(info, data.review); }
+        if(data.reviews){ mergeReviews(info, data.reviews); }
       };
       scripts.forEach(scr=>{
         try{
@@ -489,6 +709,72 @@
       if(!str) return '';
       try{ return new URL(str, base).href; }
       catch(_){ return str; }
+    }
+
+    function extractReviewsFromDom(doc){
+      if(!doc) return [];
+      const reviews=[];
+      const base=doc.baseURI || '';
+      const nodes=doc.querySelectorAll('[data-review-id]');
+      nodes.forEach(node=>{
+        const textSelectors=['[jsname="fbQN7e"]','[jsname="bN97Pc"]','.wiI7pd','.ODSEW-ShBeI-text'];
+        let text='';
+        for(const sel of textSelectors){
+          const el=node.querySelector(sel);
+          if(el){ text=cleanText(el.textContent); if(text) break; }
+        }
+        if(!text) return;
+        let rating=null;
+        const ratingEl=node.querySelector('[aria-label*="Stern"],[aria-label*="star"],[role="img"][aria-label]');
+        if(ratingEl){ rating=pickRatingFromLabel(ratingEl.getAttribute('aria-label') || ratingEl.textContent); }
+        if(rating===null){
+          const starContainer=node.querySelector('.kvMYJc');
+          if(starContainer){
+            rating=pickRating(
+              starContainer.getAttribute('aria-label'),
+              starContainer.getAttribute('aria-valuenow'),
+              starContainer.textContent
+            );
+            if(rating===null){
+              const starSpans=starContainer.querySelectorAll('span[style*="width"]');
+              if(starSpans.length){
+                let total=0;
+                starSpans.forEach(span=>{
+                  const style=span.getAttribute('style')||'';
+                  const match=style.match(/width:\s*([0-9.]+)%/);
+                  if(match){ total+=Math.max(0, Math.min(100, parseFloat(match[1])))/100; }
+                  else{ total+=1; }
+                });
+                if(total>0){ rating=Math.max(1, Math.min(5, Math.round(total))); }
+              }
+            }
+          }
+        }
+        if(rating===null) return;
+        const author = cleanText(
+          node.querySelector('.d4r55')?.textContent
+          || node.querySelector('.ODSEW-ShBeI-title')?.textContent
+          || node.querySelector('[role="link"] span')?.textContent
+        );
+        const date = cleanText(
+          node.querySelector('.rsqaWe')?.textContent
+          || node.querySelector('.ODSEW-ShBeI-RgZmSc-date')?.textContent
+          || node.querySelector('.PuaHbe')?.textContent
+        );
+        const profileLink=node.querySelector('a[href*="/maps/contrib/"]');
+        const url=profileLink ? absoluteUrl(profileLink.getAttribute('href'), base) : '';
+        const review={
+          id: cleanText(node.getAttribute('data-review-id')),
+          author,
+          rating,
+          text,
+          date,
+          url
+        };
+        const normalized=normalizeReviewRecord(review);
+        if(normalized){ reviews.push(normalized); }
+      });
+      return reviews;
     }
 
     function extractProfileFromDocument(doc){
@@ -515,11 +801,11 @@
           || cleanText(pick('meta[property="business:contact_data:street_address"]'))
           || cleanText(pick('meta[name="og:street-address"]'));
       }
+      const domReviews=extractReviewsFromDom(doc);
+      if(domReviews.length){
+        mergeReviews(info, domReviews);
+      }
       return info;
-    }
-
-    function cleanText(value){
-      return typeof value==='string' ? value.replace(/\s+/g,' ').trim() : '';
     }
 
     function normalizeNumber(value){
@@ -598,12 +884,20 @@
           }
         }
       });
+      if(Array.isArray(source.reviews) && source.reviews.length){
+        if(!Array.isArray(out.reviews) || !out.reviews.length){
+          out.reviews=dedupeReviews(source.reviews);
+        }else{
+          mergeReviews(out, source.reviews);
+        }
+      }
       return out;
     }
 
     function scanGoogleData(value, info){
       if(value===undefined || value===null) return;
       if(Array.isArray(value)){
+        mergeReviews(info, value);
         if(value.length>=2){
           const first=value[0];
           const second=value[1];
@@ -654,6 +948,16 @@
           const num=normalizeCount(value[key]);
           if(num){ info.reviewCount=num; break; }
         }
+        const reviewCandidates=[
+          value.review,
+          value.reviews,
+          value.topReviews,
+          value.reviewList,
+          value.recentReviews,
+          value.highlights,
+          value.testimonials
+        ];
+        reviewCandidates.forEach(entry=>{ if(entry) mergeReviews(info, entry); });
         Object.values(value).forEach(v=>scanGoogleData(v, info));
         return;
       }
@@ -746,6 +1050,10 @@
           const text=await res.text();
           const doc=new DOMParser().parseFromString(text,'text/html');
           const info=enrichProfileInfo(extractProfileFromDocument(doc) || {}, text);
+          if(Array.isArray(info.reviews) && info.reviews.length){
+            info.reviews=dedupeReviews(info.reviews).slice(0, MAX_REVIEWS);
+            if(!info.reviewCount){ info.reviewCount=info.reviews.length; }
+          }
           const resolvedUrl=(res.url && res.url.startsWith('https://r.jina.ai/')) ? cleaned : (res.url||cleaned);
           const hasData=Object.keys(info).length>0;
           info._baseUrl=resolvedUrl;
@@ -781,24 +1089,24 @@
       const profileUrl=GOOGLE_PROFILE.url;
 
       const apply=data=>{
-        const merged={...fallback,...data};
+        const merged=applyInfo(data ? {...data} : {}, fallback);
         const imageBase=(data && data._baseUrl) || profileUrl;
         const canOpen=profileUrl && /^https?:\/\//i.test(profileUrl);
+        const reviewList=Array.isArray(data && data.reviews) && data.reviews.length ? data.reviews : merged.reviews;
+        if(!merged.reviewCount && Array.isArray(reviewList) && reviewList.length){
+          merged.reviewCount=reviewList.length;
+        }
         const ratingVal=merged.rating;
         const reviewCount=merged.reviewCount;
         const displayName=cleanText(merged.name) || 'Unternehmensprofil';
         const subtitle=cleanText(merged.subtitle) || 'Kurzbeschreibung / Kategorie';
         const locality=cleanText(merged.locality);
+        btn.textContent='Jetzt auf Google bewerten';
+        btn.setAttribute('aria-label','Jetzt auf Google bewerten');
+        btn.setAttribute('title','Jetzt auf Google bewerten');
         nameEl.textContent=displayName;
         subEl.textContent=subtitle;
-        if(locality){
-          metaEl.textContent=locality;
-          metaEl.hidden=false;
-        }else{
-          metaEl.textContent='';
-          metaEl.hidden=true;
-        }
-        const imageSource=absoluteUrl(merged.image || merged.logo || merged.photo, imageBase);
+        const imageSource=absoluteUrl(fallback.image || merged.image || merged.logo || merged.photo, imageBase);
         if(imageSource){
           imgEl.src=imageSource;
           imgEl.style.display='block';
@@ -810,16 +1118,31 @@
         const tooltipParts=[];
         if(displayName) tooltipParts.push(displayName);
         if(locality) tooltipParts.push(locality);
-        const ratingNumeric=typeof ratingVal==='number' ? ratingVal : (typeof ratingVal==='string' ? Number(ratingVal.replace(',','.')) : NaN);
-        const ratingDisplay=Number.isFinite(ratingNumeric)
+        const ratingNumeric=pickRating(ratingVal);
+        const ratingDisplay=ratingNumeric!==null
           ? ratingNumeric.toLocaleString('de-DE',{minimumFractionDigits:1, maximumFractionDigits:1})
           : cleanText(ratingVal);
         const reviewDisplay=typeof reviewCount==='number'
           ? formatNumber(reviewCount)
           : cleanText(reviewCount);
-        const ratingSentence=(ratingDisplay && reviewDisplay)
-          ? `Bewertung ${ratingDisplay} aus ${reviewDisplay} Bewertungen`
-          : '';
+        let ratingSentence='';
+        if(ratingDisplay && reviewDisplay){
+          ratingSentence=`⭐️ ${ratingDisplay} · ${reviewDisplay} Google-Bewertungen`;
+        }else if(ratingDisplay){
+          ratingSentence=`⭐️ ${ratingDisplay} · Google-Bewertungen`;
+        }else if(reviewDisplay){
+          ratingSentence=`${reviewDisplay} Google-Bewertungen`;
+        }
+        const metaParts=[];
+        if(locality) metaParts.push(locality);
+        if(ratingSentence) metaParts.push(ratingSentence);
+        if(metaParts.length){
+          metaEl.textContent=metaParts.join(' · ');
+          metaEl.hidden=false;
+        }else{
+          metaEl.textContent='';
+          metaEl.hidden=true;
+        }
         if(ratingSentence){
           tooltipParts.push(ratingSentence);
         }
@@ -828,13 +1151,14 @@
           displayName||'Google Unternehmensprofil',
           locality || null,
           ratingSentence || null,
-          canOpen ? 'öffnen' : 'Profilinformation'
+          canOpen ? 'Jetzt auf Google bewerten' : 'Profilinformation'
         ].filter(Boolean).join(', ');
         row.setAttribute('aria-label', ariaLabel);
         row.setAttribute('aria-disabled', canOpen ? 'false' : 'true');
         row.setAttribute('tabindex', canOpen ? '0' : '-1');
         btn.setAttribute('aria-disabled', canOpen ? 'false' : 'true');
         btn.setAttribute('tabindex', canOpen ? '0' : '-1');
+        return merged;
       };
 
       apply({});
@@ -850,7 +1174,16 @@
         btn.addEventListener('click',e=>{ e.stopPropagation(); open(); });
 
         if(window.fetch && window.DOMParser){
-          resolveProfile(profileUrl).then(data=>{ if(data && Object.keys(data).length){ apply(data); }});
+          resolveProfile(profileUrl).then(data=>{
+            if(data && Object.keys(data).length){
+              const merged=apply(data);
+              let replaced=false;
+              if(data.reviews){ replaced=setReviewsFromRaw(data.reviews,{resetIndex:true}); }
+              if(!replaced && merged && merged.reviews){
+                setReviewsFromRaw(merged.reviews,{resetIndex:true});
+              }
+            }
+          });
         }
       }
     })();
